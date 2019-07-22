@@ -1,0 +1,38 @@
+Virtualenv/
+.idea/
+.vscode/
+.vscode/settings.json
+Modules/__pycache__
+
+# Python
+/env/
+/env3/
+/build/
+*.py[co]
+*.egg*
+.cache
+.DS_Store
+.Rhistory
+
+# Emacs
+*~
+.\#*
+\#*\#
+
+# Mac
+.DS_Store
+
+# Pycharm
+/.idea/
+
+env
+.ropeproject
+.vscode
+
+python/venv_py3/
+venv_py3/
+gateways/ib/META-INF/
+gateways/ib/IBJts/
+
+
+.ipynb_checkpoints

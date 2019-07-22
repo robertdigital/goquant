@@ -1,0 +1,9 @@
+# real trading
+
+dev:
+  logging-level: INFO
+
+ib:
+  ip: localhost
+  port: 7497
+  clientId: 0
