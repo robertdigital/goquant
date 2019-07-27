@@ -10,6 +10,7 @@ from ibapi.client import EClient
 from ibapi.execution import ExecutionFilter
 from ibapi.contract import Contract
 from ibapi.order import Order
+from ibapi.common import RealTimeBar
 
 from config.config import TradingConfig
 
@@ -48,12 +49,42 @@ class IBGateway(object):
             time.sleep(0.1)
         logging.info("IBAPIThread started. run() Done.")
 
-    def send_order(self, action, symbol, quantity):
-        logging.info("sending order: action: %s, symbol: %s, quantity: %s" % (action, symbol, quantity))
-        self.app.order_stock_mkt(action, symbol, quantity)
+    def send_order(self, contract: Contract, order: Order):
+        logging.info("sending order: action: %s, symbol: %s, quantity: %s" % (order.action, contract.symbol, order.totalQuantity))
+        self.app.orderOperations_req(contract, order)
+
+    def gen_contract(self, symbol, secType="STK", currency="USD", exchange="ISLAND"):
+        contract = Contract()
+        contract.symbol = symbol
+        contract.secType = secType
+        contract.currency = currency
+        # In the API side, NASDAQ is always defined as ISLAND in the exchange field
+        contract.exchange = exchange
+        return contract
+
+    def gen_order(self, action, quantity, orderType="MKT"):
+        # build order setting
+        order = Order()
+        order.action = action
+        order.orderType = orderType
+        order.totalQuantity = quantity
+        return order
+
+    def get_realtime_bar(self, contract: Contract, whatToShow="MIDPOINT", useRTH=True):
+        logging.info("send realtime bar request...")
+        id = self.app.realTimeBarsOperations_req(contract, whatToShow, useRTH)
+        logging.info("waiting for realtime bar request results, request id: %d" % id)
+        while not self._id_IB_get_realtime_data(id):
+            time.sleep(0.1)
+        return self.app.realtimeData[id]
+
+    # ===== private
 
     def _is_IB_ready(self):
         return self.app.nextValidOrderId is not None
+
+    def _id_IB_get_realtime_data(self, reqId):
+        return reqId in self.app.realtimeData
 
 
 # ====================================================
@@ -75,6 +106,10 @@ class IBApp(IBWrapper, IBClient):
         IBClient.__init__(self, wrapper=self)
         self.started = False
         self.nextValidOrderId = None
+        self.nextValidTickerId = 0
+        self.realtimeData = {} # tickerid -> bardata
+
+
 
     def nextValidId(self, orderId: int):
         super().nextValidId(orderId)
@@ -98,7 +133,12 @@ class IBApp(IBWrapper, IBClient):
         self.nextValidOrderId += 1
         return oid
 
-    def order_stock_mkt(self, action, symbol, quantity):
+    def nextTickerId(self):
+        oid = self.nextValidTickerId
+        self.nextValidTickerId += 1
+        return oid
+
+    def orderOperations_req(self, contract: Contract, order: Order):
         # Requesting the next valid id
         # The parameter is always ignored.
         self.reqIds(-1)
@@ -120,20 +160,6 @@ class IBApp(IBWrapper, IBClient):
 
         self.simplePlaceOid = self.nextOrderId()
 
-        # build stock contract
-        contract = Contract()
-        contract.symbol = symbol
-        contract.secType = "STK"
-        contract.currency = "USD"
-        # In the API side, NASDAQ is always defined as ISLAND in the exchange field
-        contract.exchange = "ISLAND"
-
-        # build order setting
-        order = Order()
-        order.action = action
-        order.orderType = "MKT"
-        order.totalQuantity = quantity
-
         self.placeOrder(self.simplePlaceOid, contract, order)
 
         # Request the day's executions
@@ -141,3 +167,16 @@ class IBApp(IBWrapper, IBClient):
 
         # Requesting completed orders
         self.reqCompletedOrders(False)
+
+    def realTimeBarsOperations_req(self, contract: Contract, whatToShow="MIDPOINT", useRTH=True):
+        tickerId = self.nextTickerId()
+        # send request
+        self.reqRealTimeBars(tickerId, contract, 5, whatToShow, useRTH, [])
+        return tickerId
+
+    def realtimeBar(self, reqId: int, time:int, open_: float, high: float, low: float, close: float,
+                        volume: int, wap: float, count: int):
+        super().realtimeBar(reqId, time, open_, high, low, close, volume, wap, count)
+        bar = RealTimeBar(time, -1, open_, high, low, close, volume, wap, count)
+        logging.info("RealTimeBar. TickerId:", reqId, bar)
+        self.realtimeData[reqId] = bar

@@ -1,5 +1,6 @@
 # goquant-trading
-send order to different broker
+Send order to different broker. 
+For project progress please see: https://github.com/hyu2707/goquant-trading/projects/2
 
 ## Use Guide
 ### IB
