@@ -8,4 +8,7 @@ ib:
   port: 7497
   clientId: 0
 
-
+alpaca:
+  url: "https://paper-api.alpaca.markets"
+  id: "ADD_YOUR_KEY"
+  key: "ADD_YOUR_KEY"

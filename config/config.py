@@ -21,3 +21,11 @@ class TradingConfig(object):
         assert self.logging_level
         assert self.ib_ip
         assert self.ib_port
+
+        self.alpaca_url = self.config["alpaca"]["url"]
+        self.alpaca_id = self.config["alpaca"]["id"]
+        self.alpaca_key = self.config["alpaca"]["key"]
+
+        assert self.alpaca_url
+        assert self.alpaca_id
+        assert self.alpaca_key

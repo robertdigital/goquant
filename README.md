@@ -1,16 +1,18 @@
 # goquant-trading
-Send order to different broker. 
+Send order to different broker. (Support IB and Alpaca right now)
 For project progress please see: https://github.com/hyu2707/goquant-trading/projects/2
 
 ## Use Guide
 ### IB
 see `samples/ib_trading`
+### Alpaca
+see `samples/alpaca_trading`
 
 ## Dev Setup
 ```bash
 GOQUANT_TRADING_PATH=`pwd`
 ```
-1. Setup IB API
+0. (For IB user) Setup IB API
 https://ibkr.info/article/2484
 ```
 cd $GOQUANT_TRADING_PATH/gateways/ib/
@@ -18,7 +20,7 @@ unzip twsapi_macunix.976.01.zip -d .
 ```
 Follow instruction here to setup IB Workstation: http://interactivebrokers.github.io/tws-api/initial_setup.html
 
-2. Setup python env
+1. Setup python env
 ```bash
 cd $GOQUANT_TRADING_PATH
 virtualenv -p python3.7 venv_py3
