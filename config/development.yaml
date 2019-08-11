@@ -10,5 +10,9 @@ ib:
 
 alpaca:
   url: "https://paper-api.alpaca.markets"
-  id: "ADD_YOUR_KEY"
-  key: "ADD_YOUR_KEY"
+  id: ""
+  key: ""
+
+algo:
+  run:
+    - "buy_spy_dip"

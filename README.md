@@ -4,9 +4,9 @@ For project progress please see: https://github.com/hyu2707/goquant-trading/proj
 
 ## Use Guide
 ### IB
-see `samples/ib_trading`
+see `algo/ib_trading`
 ### Alpaca
-see `samples/alpaca_trading`
+see `algo/buy_spy_dip.py`
 
 ## Dev Setup
 ```bash
@@ -26,6 +26,10 @@ cd $GOQUANT_TRADING_PATH
 virtualenv -p python3.7 venv_py3
 source venv_py3/bin/activate
 pip install -r requirements.txt
+ipython kernel install --user --name=goquant
 cd gateways/ib/IBJts/source/pythonclient
 python setup.py install
 ```
+
+## Dev Guide
+### Framework
