@@ -18,7 +18,7 @@ class GoquantData(object):
                  start_date,
                  end_date=datetime.today().strftime(TIME_FMT),
                  datasource=DATASOURCE_ALPACA,
-                 savecsv_path=True):
+                 use_cache=True):
         """
         get historical data
         :param symbols: list of string
