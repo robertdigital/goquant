@@ -36,9 +36,12 @@ class IBGateway(object):
                 self.ib.app.run()
 
         logger.info("start IBAPI connection...")
-        self.app.connect(self.cfg.ib_ip, self.cfg.ib_port, clientId=self.cfg.ib_clientId)
+        self.app.connect(
+            self.cfg.ib_ip,
+            self.cfg.ib_port,
+            clientId=self.cfg.ib_clientId)
         logger.info("connection done. serverVersion:%s connectionTime:%s" % (self.app.serverVersion(),
-                                                             self.app.twsConnectionTime()))
+                                                                             self.app.twsConnectionTime()))
         logger.info("start IBAPIThread...")
         t1 = IBAPIThread(self)
         t1.start()
@@ -48,15 +51,19 @@ class IBGateway(object):
         logger.info("IBAPIThread started. run() Done.")
 
     def send_order(self, contract: Contract, order: Order):
-        logger.info("sending order: action: %s, symbol: %s, quantity: %s" % (order.action, contract.symbol, order.totalQuantity))
+        logger.info(
+            "sending order: action: %s, symbol: %s, quantity: %s" %
+            (order.action, contract.symbol, order.totalQuantity))
         self.app.orderOperations_req(contract, order)
 
-    def gen_contract(self, symbol, secType="STK", currency="USD", exchange="ISLAND"):
+    def gen_contract(self, symbol, secType="STK",
+                     currency="USD", exchange="ISLAND"):
         contract = Contract()
         contract.symbol = symbol
         contract.secType = secType
         contract.currency = currency
-        # In the API side, NASDAQ is always defined as ISLAND in the exchange field
+        # In the API side, NASDAQ is always defined as ISLAND in the exchange
+        # field
         contract.exchange = exchange
         return contract
 
@@ -68,10 +75,13 @@ class IBGateway(object):
         order.totalQuantity = quantity
         return order
 
-    def get_realtime_bar(self, contract: Contract, whatToShow="MIDPOINT", useRTH=True):
+    def get_realtime_bar(self, contract: Contract,
+                         whatToShow="MIDPOINT", useRTH=True):
         logger.info("send realtime bar request...")
         id = self.app.realTimeBarsOperations_req(contract, whatToShow, useRTH)
-        logger.info("waiting for realtime bar request results, request id: %d" % id)
+        logger.info(
+            "waiting for realtime bar request results, request id: %d" %
+            id)
         while not self._id_IB_get_realtime_data(id):
             time.sleep(0.1)
         return self.app.realtimeData[id]
@@ -105,9 +115,7 @@ class IBApp(IBWrapper, IBClient):
         self.started = False
         self.nextValidOrderId = None
         self.nextValidTickerId = 0
-        self.realtimeData = {} # tickerid -> bardata
-
-
+        self.realtimeData = {}  # tickerid -> bardata
 
     def nextValidId(self, orderId: int):
         super().nextValidId(orderId)
@@ -166,15 +174,17 @@ class IBApp(IBWrapper, IBClient):
         # Requesting completed orders
         self.reqCompletedOrders(False)
 
-    def realTimeBarsOperations_req(self, contract: Contract, whatToShow="MIDPOINT", useRTH=True):
+    def realTimeBarsOperations_req(
+            self, contract: Contract, whatToShow="MIDPOINT", useRTH=True):
         tickerId = self.nextTickerId()
         # send request
         self.reqRealTimeBars(tickerId, contract, 5, whatToShow, useRTH, [])
         return tickerId
 
-    def realtimeBar(self, reqId: int, time:int, open_: float, high: float, low: float, close: float,
-                        volume: int, wap: float, count: int):
+    def realtimeBar(self, reqId: int, time: int, open_: float, high: float, low: float, close: float,
+                    volume: int, wap: float, count: int):
         super().realtimeBar(reqId, time, open_, high, low, close, volume, wap, count)
-        bar = RealTimeBar(time, -1, open_, high, low, close, volume, wap, count)
+        bar = RealTimeBar(time, -1, open_, high, low,
+                          close, volume, wap, count)
         logger.info("RealTimeBar. TickerId:", reqId, bar)
         self.realtimeData[reqId] = bar

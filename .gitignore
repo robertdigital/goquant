@@ -33,6 +33,11 @@ python/venv_py3/
 venv_py3/
 gateways/ib/META-INF/
 gateways/ib/IBJts/
+gateway/ib/IBJts/*
 
 
 .ipynb_checkpoints
+
+# local files
+/priv/
+config/priv.yaml

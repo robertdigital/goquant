@@ -2,6 +2,7 @@ import logging
 
 from config.config import TradingConfig
 
+
 class Logger(object):
     def __init__(self):
         self.cfg = TradingConfig()

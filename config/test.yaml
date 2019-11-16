@@ -10,5 +10,6 @@ ib:
 
 alpaca:
   url: "https://paper-api.alpaca.markets"
-  id: "ADD_YOUR_KEY"
-  key: "ADD_YOUR_KEY"
+
+data:
+  csv_folder: "raw_data_test"

@@ -1,5 +1,6 @@
 from gateway.alpaca import AlpacaGateway
 
+
 class Account(object):
     def __init__(self):
         self.alpaca = AlpacaGateway()
@@ -11,6 +12,3 @@ class Account(object):
 
     def get_positions(self):
         return self.alpaca.api.list_positions()
-
-
-

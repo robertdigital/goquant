@@ -1,35 +1,46 @@
 # goquant-trading
 Send order to different broker. (Support IB and Alpaca right now)
-For project progress please see: https://github.com/hyu2707/goquant-trading/projects/2
+
+## Current Status
+```diff
++ US stock data source: Alpaca
+- US stock trading platform: Alpaca
+- US Bitcoin data source: None
+- US Bitcoin trading platform: None
+- CN data source: None
+- CN trading platfoorm: None
+```
+
 
 ## Use Guide
-### IB
-see `algo/ib_trading`
-### Alpaca
-see `algo/buy_spy_dip.py`
-
-## Dev Setup
+Step 1. Create private config in `config/priv.yaml`
+register free account in Alpaca
+follow this format:
+```
+alpaca:
+  id: "<YOUR_ID>"
+  key: "<YOUR_KEY>"
+```
+Step 2. Build env
+```
+make install
+```
+then activate env:
 ```bash
-GOQUANT_TRADING_PATH=`pwd`
+source env/bin/activate
 ```
-0. (For IB user) Setup IB API
-https://ibkr.info/article/2484
-```
-cd $GOQUANT_TRADING_PATH/gateways/ib/
-unzip twsapi_macunix.976.01.zip -d .
-```
-Follow instruction here to setup IB Workstation: http://interactivebrokers.github.io/tws-api/initial_setup.html
-
-1. Setup python env
+Step 3. Check tests
 ```bash
-cd $GOQUANT_TRADING_PATH
-virtualenv -p python3.7 venv_py3
-source venv_py3/bin/activate
-pip install -r requirements.txt
-ipython kernel install --user --name=goquant
-cd gateways/ib/IBJts/source/pythonclient
-python setup.py install
+make test
 ```
 
 ## Dev Guide
-### Framework
+### Test
+```bash
+make test
+```
+### Lint
+```bash
+make lint
+```
+
