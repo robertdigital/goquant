@@ -18,7 +18,7 @@ class TradingConfig(object):
         with open(yaml_file, 'r') as f:
             self.config = yaml.safe_load(f)
 
-        print("load priv config: {}".format(yaml_file))
+        print("load priv config: {}".format(priv_yaml_file))
         with open(priv_yaml_file, 'r') as f:
             self.priv_config = yaml.safe_load(f)
 
@@ -43,3 +43,5 @@ class TradingConfig(object):
         self.csv_folder = self.config["data"]["csv_folder"]
 
         assert self.csv_folder
+
+        print("env cfg: {}\npriv cfg: {}".format(self.config, self.priv_config))
