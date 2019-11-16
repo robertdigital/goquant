@@ -43,3 +43,13 @@ class GoquantData(object):
                                   end_date=end_date,
                                   datasource=datasource,
                                   use_cache=use_cache)
+
+    def get_data_path(self,
+                      symbols,
+                      freq,
+                      start_date,
+                      end_date=datetime.today().strftime(TIME_FMT)):
+        return self.data.get_data_path(symbols=symbols,
+                                       freq=freq,
+                                       start_date=start_date,
+                                       end_date=end_date)

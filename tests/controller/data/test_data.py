@@ -27,7 +27,10 @@ class TestData(unittest.TestCase):
         assert "UBER" in df_dict
         assert df_dict["SPY"].shape == (5, 6)
         assert df_dict["UBER"].shape == (5, 6)
-        self.assertListEqual(list(df_dict["SPY"].columns), ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close'])
+        self.assertListEqual(
+            list(
+                df_dict["SPY"].columns), [
+                'Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close'])
 
         # test load from cache
         df_dict = data.get_data(symbols=["SPY", "UBER"],
@@ -38,4 +41,12 @@ class TestData(unittest.TestCase):
                                 use_cache=True)
         assert df_dict["SPY"].shape == (5, 6)
         assert df_dict["UBER"].shape == (5, 6)
+
+        file_path = data.get_data_path(["SPY", "UBER"],
+                                       freq=FREQ_DAY,
+                                       start_date=start_datetime_str,
+                                       end_date=end_datetime_str)
+        assert len(file_path) == 2
+        assert "UBER" in file_path
+        assert "SPY" in file_path
         data.clean_cache()

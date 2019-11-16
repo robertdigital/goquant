@@ -89,6 +89,30 @@ class Data(object):
 
         return df_dict
 
+    def get_data_path(self, symbols, freq, start_date, end_date):
+        """
+        get saved data path
+        :param symbols: list of string
+            symbols
+        :param freq: string
+            frequency
+        :param start_date: string
+            in YYYY-MM-DD format
+        :param end_date: striing
+            in YYYY-MM-DD format
+        :return: dict
+            symbol->data path
+        """
+        ret = {}
+        for symbol in symbols:
+            key = DATA_FILE_FMT.format(
+                symbol=symbol, freq=freq, start_date=start_date, end_date=end_date)
+            filepath = "{}/{}.csv".format(self.cfg.csv_folder, key)
+            if os.path.isfile(filepath):
+                os.path.abspath(filepath)
+                ret[symbol] = filepath
+        return ret
+
     def save_df(self, df, key, overwrite=False):
         if not os.path.exists(self.cfg.csv_folder):
             os.makedirs(self.cfg.csv_folder)
