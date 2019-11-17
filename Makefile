@@ -1,21 +1,36 @@
-# make file for goquant-trading
+# make file for goquant
 project := goquant
 ENV := env
+ENV_TEST := test
+ENV_DEV := development
+ENV_PROD := production
 
 $(ENV): $(ENV)/bin/pip
 	$(ENV)/bin/pip install --upgrade pip && \
 	$(ENV)/bin/pip install -r requirements.txt
+
+install:
+	python3 -m virtualenv $(ENV)
+	make python-env
+
+clean:
+	rm -rf $(ENV)
+
+python-env:
+	$(ENV)/bin/pip install --upgrade pip && \
+	$(ENV)/bin/pip install -r requirements.txt
+
+research:
 	ipython kernel install --name $(ENV)
 
-install: $(ENV)
+# run CI 
+jenkins:
+	make clean
+	make install
+	RUNTIME_ENV=$(ENV_TEST) make test
 
-
-$(ENV)/bin/pip:
-	virtualenv -p python3 env
-	$(ENV)/bin/pip install --upgrade pip
-
-test: $(ENV)
-	RUNTIME_ENV=test PYTHONPATH=$(ENV)/bin/python:. py.test -rxs --tb short
+test:
+	RUNTIME_ENV=test PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test -rxs --tb short
 
 lint:
 	autopep8 --in-place --recursive --aggressive controller entity handler gateway repository tests
