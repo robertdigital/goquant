@@ -10,5 +10,5 @@ class BaseAlgo(object):
     def init(self):
         pass
 
-    def start(self):
+    def run(self)->[list]:
         pass

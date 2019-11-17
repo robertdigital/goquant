@@ -28,6 +28,7 @@ Modules/__pycache__
 env
 .ropeproject
 .vscode
+*.csv
 
 python/venv_py3/
 venv_py3/
