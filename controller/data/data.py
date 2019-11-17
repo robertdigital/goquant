@@ -144,11 +144,17 @@ class Data(object):
         end_datetime = datetime.strptime(end_date, TIME_FMT)
 
         df_dict = {}
-        if datasource == DATASOURCE_ALPACA and freq == FREQ_DAY:
-            delta = end_datetime - start_datetime
-            days = delta.days
+        if datasource == DATASOURCE_ALPACA:
+            if freq == FREQ_DAY:
+                delta = end_datetime - start_datetime
+                length = delta.days
+            elif freq == FREQ_MINUTE:
+                delta = end_datetime - start_datetime
+                length = delta.days * 8 * 60
+            else:
+                raise ValueError("unsupported freq: {}".format(freq))
             df_dict = self._get_prices_to_today(
-                symbols=symbols, freq="day", length=days)
+                symbols=symbols, freq=freq, length=length)
             # cut days
             for symbol in df_dict:
                 df_dict[symbol] = df_dict[symbol].loc[start_date:]
