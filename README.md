@@ -4,7 +4,7 @@ Send order to different broker. (Support IB and Alpaca right now)
 ## Current Status
 ```diff
 + US stock data source: Alpaca
-- US stock trading platform: Alpaca
++ US stock trading platform: Alpaca
 - US Bitcoin data source: None
 - US Bitcoin trading platform: None
 - CN data source: None
