@@ -10,6 +10,9 @@ ib:
 
 alpaca:
   url: "https://paper-api.alpaca.markets"
+  # empty test account for paper trading
+  id: "PKNYZ3YUDGKRRW4WFUKB"
+  key: "5h7eoROgFCtLDheOGrKGKOREIDGWVtKnWKcTM3l8"
 
 data:
   csv_folder: "raw_data_test"
