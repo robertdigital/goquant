@@ -1,6 +1,5 @@
-.. image:: https://codecov.io/gh/hyu2707/goquant/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/hyu2707/goquant
-  
+[![codecov](https://codecov.io/gh/hyu2707/goquant/branch/master/graph/badge.svg)](https://codecov.io/gh/hyu2707/goquant)
+
 # goquant-trading
 Send order to different broker. (Support IB and Alpaca right now)
 
