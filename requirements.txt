@@ -4,5 +4,5 @@ alpaca-trade-api==0.35
 ipykernel==5.1.2
 PyAlgoTrade==0.20
 pytest==5.2.4
-coverage
-pytest-cov
+coverage==4.5.4
+pytest-cov==2.8.1
