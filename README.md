@@ -1,5 +1,5 @@
 [![codecov](https://codecov.io/gh/hyu2707/goquant/branch/master/graph/badge.svg)](https://codecov.io/gh/hyu2707/goquant)
-[![Actions Status](https://github.com/byu2707/goquant/workflows/Python application/badge.svg)](https://github.com/byu2707/goquant/actions)
+[![Actions Status](https://github.com/byu2707/goquant/workflows/Python%20application/badge.svg)](https://github.com/byu2707/goquant/actions)
 # goquant-trading
 Send order to different broker. (Support IB and Alpaca right now)
 
