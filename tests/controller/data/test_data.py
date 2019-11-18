@@ -25,8 +25,12 @@ class TestData(unittest.TestCase):
         assert len(df_dict) == 2
         assert "SPY" in df_dict
         assert "UBER" in df_dict
-        assert df_dict["SPY"].shape == (5, 6)
-        assert df_dict["UBER"].shape == (5, 6)
+        assert df_dict["SPY"].shape[0] >= 5
+        assert df_dict["SPY"].shape[0] <= 7
+        assert df_dict["UBER"].shape[0] >= 5
+        assert df_dict["UBER"].shape[0] <= 7
+        assert df_dict["SPY"].shape[1] == 6
+        assert df_dict["UBER"].shape[1] == 6
         self.assertListEqual(
             list(
                 df_dict["SPY"].columns), [
@@ -39,8 +43,12 @@ class TestData(unittest.TestCase):
                                 end_date=end_datetime_str,
                                 datasource=DATASOURCE_CACHE,
                                 use_cache=True)
-        assert df_dict["SPY"].shape == (5, 6)
-        assert df_dict["UBER"].shape == (5, 6)
+        assert df_dict["SPY"].shape[0] >= 5
+        assert df_dict["SPY"].shape[0] <= 7
+        assert df_dict["UBER"].shape[0] >= 5
+        assert df_dict["UBER"].shape[0] <= 7
+        assert df_dict["SPY"].shape[1] == 6
+        assert df_dict["UBER"].shape[1] == 6
 
         file_path = data.get_data_path(["SPY", "UBER"],
                                        freq=FREQ_DAY,

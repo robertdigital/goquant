@@ -28,10 +28,10 @@ research:
 jenkins:
 	make clean
 	make install
-	RUNTIME_ENV=$(ENV_TEST) make test
+	RUNTIME_ENV=$(ENV_TEST) make test*
 
 test:
-	RUNTIME_ENV=test PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test -rxs --tb short
+	RUNTIME_ENV=test PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test --cov-config .coveragerc --cov util --cov controller --cov config --cov entity --cov gateway --cov handler -rxs --tb short
 
 lint:
 	pip install flake8
