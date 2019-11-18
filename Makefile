@@ -16,7 +16,7 @@ install:
 
 clean:
 	rm -rf $(ENV)
-	rm .coverage
+	rm -rf .coverage
 
 python-env:
 	$(ENV)/bin/pip install --upgrade pip && \
