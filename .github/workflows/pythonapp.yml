@@ -16,8 +16,9 @@ jobs:
     - name: make jenkins
       run: |
         make jenkins
+        CODECOV_TOKEN="3d66e4f7-cf60-4393-858d-7029403a7bf6"
         pip install codecov
-        codecov
+        codecov --token="3d66e4f7-cf60-4393-858d-7029403a7bf6"
 #     - name: Lint with flake8
 #       run: |
 #         pip install flake8
