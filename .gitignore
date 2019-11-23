@@ -29,6 +29,7 @@ env
 .ropeproject
 .vscode
 *.csv
+.coverage
 
 python/venv_py3/
 venv_py3/

@@ -7,7 +7,6 @@ class Logger(object):
     def __init__(self):
         self.cfg = TradingConfig()
         self.logger = logging.getLogger("goquant")
-        logging.basicConfig()
         logging.getLogger().setLevel(self.cfg.logging_level)
 
         logging_file = None

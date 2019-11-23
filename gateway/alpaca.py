@@ -41,17 +41,19 @@ class AlpacaGateway(object):
         sells = [o for o in orders if o.side == 'sell']
         for order in sells:
             try:
-                logger.info(f'submit(sell): {order}')
+                logger.info(f'submit(sell): {order.get_dict()}')
                 self.api.submit_order(**order.get_dict())
             except Exception as e:
                 logger.error(e)
+        wait = wait//2 # both sell and buy
         count = wait
         while count > 0:
             pending = self.api.list_orders()
             if len(pending) == 0:
                 logger.info(f'all sell orders done')
                 break
-            logger.info(f'{len(pending)} sell orders pending...')
+            logger.info(f'{len(pending)} sell orders pending... wait time {count}')
+            logger.debug("pending orders detail: {}".format([p.__dict__ for p in pending]))
             time.sleep(1)
             count -= 1
 
@@ -59,7 +61,7 @@ class AlpacaGateway(object):
         buys = [o for o in orders if o.side == 'buy']
         for order in buys:
             try:
-                logger.info(f'submit(buy): {order}')
+                logger.info(f'submit(buy): {order.get_dict()}')
                 self.api.submit_order(**order.get_dict())
             except Exception as e:
                 logger.error(e)
@@ -69,7 +71,8 @@ class AlpacaGateway(object):
             if len(pending) == 0:
                 logger.info(f'all buy orders done')
                 break
-            logger.info(f'{len(pending)} buy orders pending...')
+            logger.info(f'{len(pending)} buy orders pending... wait time {count}')
+            logger.debug("pending orders detail: {}".format([p.__dict__ for p in pending]))
             time.sleep(1)
             count -= 1
 

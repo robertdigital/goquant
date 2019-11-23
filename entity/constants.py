@@ -13,3 +13,17 @@ DATA_FILE_FMT = "{symbol}_{freq}_{start_date}_{end_date}"
 
 DATA_KEY_DF = "df"
 DATA_KEY_PATH = "path"
+
+DATA_SYMBOL = 'Symbol'
+DATA_OPEN = "Open"
+DATA_HIGH = "High"
+DATA_LOW = "Low"
+DATA_CLOSE = "Close"
+DATA_VOLUME = "Volume"
+DATA_ADJCLOSE = "Adj Close"
+DATA_HISTORICAL_COLS = [DATA_SYMBOL, DATA_OPEN, DATA_HIGH, DATA_LOW, DATA_CLOSE, DATA_VOLUME, DATA_ADJCLOSE]
+
+
+ORDER_TYPE_MARKET = "market"
+ORDER_BUY = "buy"
+ORDER_SELL = "sell"
