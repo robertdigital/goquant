@@ -58,6 +58,7 @@ class Data(object):
             logger.error(
                 "freq {} not in valid list {}".format(
                     freq, VALID_FREQ))
+        logger.info("loading data...")
 
         # get cached data
         df_dict = {}
@@ -87,6 +88,7 @@ class Data(object):
                     symbol=symbol, freq=freq, start_date=start_date, end_date=end_date)
                 self.save_df(df_dict[symbol], filename, False)
 
+        logger.info("loaded done. symbol number {}".format(len(df_dict)))
         return df_dict
 
     def get_data_path(self, symbols, freq, start_date, end_date):
@@ -118,7 +120,7 @@ class Data(object):
             os.makedirs(self.cfg.csv_folder)
         filepath = "{}/{}.csv".format(self.cfg.csv_folder, key)
         if not overwrite and os.path.isfile(filepath):
-            logger.info("exist data file, skip: {}".format(filepath))
+            logger.debug("exist data file, skip: {}".format(filepath))
         else:
             logger.info("saving data file to: {}".format(filepath))
             df.to_csv(filepath)
@@ -126,7 +128,7 @@ class Data(object):
     def load_df(self, key):
         filepath = "{}/{}.csv".format(self.cfg.csv_folder, key)
         if os.path.isfile(filepath):
-            logger.info("loading data from file: {}".format(filepath))
+            logger.debug("loading data from file: {}".format(filepath))
             df = pd.read_csv(filepath)
             df.set_index("Date Time", inplace=True)
             return df
