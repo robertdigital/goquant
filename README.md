@@ -7,8 +7,8 @@ Send order to different broker. (Support IB and Alpaca right now)
 ```diff
 + US stock data source: Alpaca
 + US stock trading platform: Alpaca
-- US Bitcoin data source: None
-- US Bitcoin trading platform: None
++ US Bitcoin data source: Binance
++ US Bitcoin trading platform: Binance
 - CN data source: None
 - CN trading platfoorm: None
 ```
