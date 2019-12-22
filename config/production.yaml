@@ -12,4 +12,5 @@ alpaca:
   url: "https://paper-api.alpaca.markets"
 
 data:
+  base_folder: "goquantdata"
   csv_folder: "raw_data_prod"

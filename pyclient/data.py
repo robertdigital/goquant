@@ -12,7 +12,8 @@ class GQData(object):
                         symbols,
                         freq,
                         start_date,
-                        end_date):
+                        end_date,
+                        datasource=DATASOURCE_ALPACA):
         """
         get historical data for symbols
         :param symbols: list of string
@@ -26,31 +27,15 @@ class GQData(object):
         :return: dataframe
             time (index), symbol, ...
         """
-        start_date_str = start_date.strftime(TIME_FMT)
-        end_daate_str = end_date.strftime(TIME_FMT)
-        out_dict = self.data.get_data(
+        out_df = self.data.get_data(
             symbols=symbols,
             freq=freq,
-            start_date=start_date_str,
-            end_date=end_daate_str,
-            datasource=DATASOURCE_ALPACA,
-            use_cache=True
+            start_date=start_date,
+            end_date=end_date,
+            datasource=datasource,
+            use_cache=True,
+            dict_output=False,
         )
-
-        # convert to output format
-        out_df = None
-        for symbol in out_dict:
-            cur_df = out_dict[symbol]
-            cur_df[DATA_SYMBOL] = symbol
-            if out_df is None:
-                out_df = cur_df
-            else:
-                out_df = pd.concat([out_df, cur_df])
-        # reorder columns
-        if out_df is None:
-            logger.error("get empty historical data")
-            return
-        out_df = out_df[DATA_HISTORICAL_COLS]
         return out_df
 
     def clean_cache(self):

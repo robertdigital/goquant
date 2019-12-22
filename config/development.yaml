@@ -1,7 +1,7 @@
 # paper trading
 
 dev:
-  logging-level: INFO
+  logging-level: DEBUG
 
 ib:
   ip: localhost
@@ -12,4 +12,5 @@ alpaca:
   url: "https://paper-api.alpaca.markets"
 
 data:
+  base_folder: "goquantdata"
   csv_folder: "raw_data_dev"
