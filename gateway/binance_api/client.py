@@ -1,3 +1,6 @@
+"""
+https://github.com/sammchardy/python-binance
+"""
 # coding=utf-8
 
 import hashlib

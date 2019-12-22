@@ -1,5 +1,4 @@
 import time
-import datetime
 
 import alpaca_trade_api as tradeapi
 
@@ -95,64 +94,3 @@ class AlpacaGateway(object):
             idx += 200
 
         return barset.df
-    #
-    # def get_prices(self, symbols, start_dt, end_dt, freq='day', max_workers=5):
-    #     '''Get the map of DataFrame price data from Alpaca's data API.'''
-    #     try:
-    #         start = start_dt.strftime('%Y-%m-%d')
-    #         end = end_dt.strftime('%Y-%m-%d')
-    #     except AttributeError:
-    #         try:
-    #             datetime.datetime.strptime(start_dt, '%Y-%m-%d')
-    #             datetime.datetime.strptime(end_dt, '%Y-%m-%d')
-    #         except ValueError:
-    #             raise ValueError("Incorrect data format, should be YYYY-MM-DD")
-    #         start = start_dt
-    #         end = end_dt
-    #
-    #     def get_barset(symbols):
-    #         return self.api.get_barset(
-    #             symbols,
-    #             freq,
-    #             limit=None,
-    #             start=None,
-    #             end=None,
-    #             until="2019-08-01",
-    #             after="2019-07-01"
-    #         )
-    #
-    #     # The maximum number of symbols we can request at once is 200.
-    #     barset = None
-    #     idx = 0
-    #     while idx <= len(symbols) - 1:
-    #         if barset is None:
-    #             barset = get_barset(symbols[idx:idx + 200])
-    #         else:
-    #             barset.update(get_barset(symbols[idx:idx + 200]))
-    #         idx += 200
-    #
-    #     return barset.df
-
-
-class AlpacaOrder(object):
-    symbol = ""
-    qty = ""
-    side = ""
-    type = ""
-    time_in_force = ""
-
-    def __init__(self, symbol, qty, side, type="market", time_in_force="day"):
-        self.symbol = symbol
-        self.qty = qty
-        self.side = side
-        self.type = type
-        self.time_in_force = time_in_force
-
-    def get_dict(self):
-        return {
-            "symbol": self.symbol,
-            "qty": self.qty,
-            "side": self.side,
-            "type": self.type,
-            "time_in_force": self.time_in_force,
-        }

@@ -13,7 +13,8 @@ class GQData(object):
                         freq,
                         start_date,
                         end_date,
-                        datasource=DATASOURCE_ALPACA):
+                        datasource=DATASOURCE_ALPACA,
+                        dict_output=False):
         """
         get historical data for symbols
         :param symbols: list of string
@@ -34,7 +35,7 @@ class GQData(object):
             end_date=end_date,
             datasource=datasource,
             use_cache=True,
-            dict_output=False,
+            dict_output=dict_output,
         )
         return out_df
 

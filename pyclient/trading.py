@@ -4,15 +4,17 @@ from entity.order import Order
 
 
 class GQTrading(object):
-    def __init__(self, algos, run_freq_s=1):
+    def __init__(self, algos, trading_platform, run_freq_s=1):
         """
         trading system
         :param run_freq_s: int
             running frequency in sec
+        :param trading_platform: string
+            alpha or binance
         :param algos: dict
             name string -> GQAlgo object
         """
-        self.trading_engine = Trading(run_freq_s=run_freq_s, algos=algos)
+        self.trading_engine = Trading(trading_platform=trading_platform, run_freq_s=run_freq_s, algos=algos)
 
     def start(self):
         """
@@ -40,8 +42,8 @@ class GQOrder(Order):
 
 
 class GQAlgo(object):
-    def __init__(self):
-        self.algo = BaseAlgo()
+    def __init__(self, trading_platform):
+        self.algo = BaseAlgo(trading_platform)
 
     def init(self):
         pass

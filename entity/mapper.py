@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from entity.constants import *
+from .order import Order
+import gateway.binance_api.enums as binance_enums
 
 
 def alpaca_to_goquant(symbol, in_data):
@@ -23,4 +25,19 @@ def binance_to_goquant(symbol, in_data):
     return df_binance[DATA_HISTORICAL_COLS]
 
 
+def order_goquant_to_binance(order: Order):
+    side_map = {
+        ORDER_BUY: binance_enums.SIDE_BUY,
+        ORDER_SELL: binance_enums.SIDE_SELL
+    }
+    type_map = {
+        ORDER_TYPE_MARKET: binance_enums.ORDER_TYPE_MARKET
+    }
+    ret = {
+        "symbol": order.symbol,
+        "side": side_map[order.side],
+        "type": type_map[order.type],
+        "quantity": order.qty
+    }
+    return ret
 

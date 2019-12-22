@@ -8,6 +8,7 @@ from config.config import TradingConfig
 from entity.constants import FREQ_DAY, FREQ_MINUTE, KLINES_DATA_COLS
 from util.logger import logger
 from util.date import interval_to_milliseconds, date_to_milliseconds
+from entity.mapper import order_goquant_to_binance
 
 
 class BinanceGateway(object):
@@ -95,3 +96,13 @@ class BinanceGateway(object):
                 time.sleep(1)
         df_binance = pd.DataFrame(output_data, columns=KLINES_DATA_COLS).astype(np.float64)
         return df_binance
+
+    def start(self):
+        pass
+
+    def trade(self, orders: list):
+        for order in orders:
+            binance_order = order_goquant_to_binance(order)
+            logger.debug("binance order: {}".format(binance_order))
+            response = self.client.create_order(**binance_order)
+            logger.debug("binance order response: {}".format(response))
