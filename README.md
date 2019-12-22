@@ -1,7 +1,7 @@
 [![codecov](https://codecov.io/gh/hyu2707/goquant/branch/master/graph/badge.svg)](https://codecov.io/gh/hyu2707/goquant)
 ![](https://github.com/hyu2707/goquant/workflows/.github/workflows/pythonapp.yml/badge.svg)
 # goquant-trading
-Send order to different broker. (Support IB and Alpaca right now)
+Send order to different broker. (Support IB, Alpaca and Binance right now)
 
 ## Current Status
 ```diff
