@@ -1,5 +1,6 @@
 import os
 import yaml
+from os.path import expanduser
 
 
 class TradingConfig(object):
@@ -31,9 +32,13 @@ class TradingConfig(object):
         assert self.alpaca_url
 
         # data
-        self.csv_folder = self.config["data"]["csv_folder"]
+        base_folder = self.config["data"]["base_folder"]
+        csv_folder_name = self.config["data"]["csv_folder"]
+        self.csv_data_path = "{}/{}/{}".format(expanduser("~"), base_folder, csv_folder_name)
+        if not os.path.exists(self.csv_data_path):
+            os.makedirs(self.csv_data_path)
 
-        assert self.csv_folder
+        assert self.csv_data_path
 
         # private data
         if env != "test":
@@ -43,8 +48,13 @@ class TradingConfig(object):
 
             self.alpaca_id = self.priv_config["alpaca"]["id"]
             self.alpaca_key = self.priv_config["alpaca"]["key"]
+            self.binance_api_key = self.priv_config["binance"]["key"]
+            self.binance_secret_key = self.priv_config["binance"]["secret"]
         else:
             self.alpaca_id = self.config["alpaca"]["id"]
             self.alpaca_key = self.config["alpaca"]["key"]
+            self.binance_api_key = self.config["binance"]["key"]
+            self.binance_secret_key = self.config["binance"]["secret"]
+
         assert self.alpaca_id  # it's in priv.yaml
         assert self.alpaca_key  # it's in priv.yaml

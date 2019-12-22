@@ -1,7 +1,7 @@
 # paper trading
 
 dev:
-  logging-level: INFO
+  logging-level: DEBUG
 
 ib:
   ip: localhost
@@ -14,5 +14,10 @@ alpaca:
   id: "PKNYZ3YUDGKRRW4WFUKB"
   key: "5h7eoROgFCtLDheOGrKGKOREIDGWVtKnWKcTM3l8"
 
+binance:
+  key: ""
+  secret: ""
+
 data:
+  base_folder: "goquantdata"
   csv_folder: "raw_data_test"
