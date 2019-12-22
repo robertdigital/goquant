@@ -66,7 +66,8 @@ class Data(object):
         load_symbol = []
         if use_cache:
             for symbol in symbols:
-                data_key = self.get_data_key(symbol, freq, start_date, end_date)
+                data_key = self.get_data_key(
+                    symbol, freq, start_date, end_date)
                 if self.check_data_key(data_key):
                     cur_df = self.load_df(data_key)
                     df_dict[symbol] = cur_df
@@ -84,7 +85,8 @@ class Data(object):
         # save output
         if use_cache:
             for symbol in df_dict:
-                data_key = self.get_data_key(symbol, freq, start_date, end_date)
+                data_key = self.get_data_key(
+                    symbol, freq, start_date, end_date)
                 self.save_df(df_dict[symbol], data_key, False)
 
         logger.info("loaded done. symbol number {}".format(len(df_dict)))
@@ -140,7 +142,8 @@ class Data(object):
         if os.path.exists(self.cfg.csv_data_path):
             shutil.rmtree(self.cfg.csv_data_path)
 
-    def _get_prices_remote(self, symbols, freq, start_date, end_date, datasource):
+    def _get_prices_remote(self, symbols, freq,
+                           start_date, end_date, datasource):
         df_dict = {}
         if datasource == DATASOURCE_ALPACA:
             if freq == FREQ_DAY:
@@ -205,8 +208,3 @@ class Data(object):
             raise err
         else:
             logger.debug("get number of data shape: " + str(data_df.shape))
-
-
-
-
-

@@ -38,9 +38,18 @@ class TestMapper(unittest.TestCase):
                 "0"
             ]
         ]
-        in_data = pd.DataFrame(in_data_raw, columns=KLINES_DATA_COLS).astype(np.float64)
+        in_data = pd.DataFrame(
+            in_data_raw,
+            columns=KLINES_DATA_COLS).astype(
+            np.float64)
         out_data = binance_to_goquant("test_symbol", in_data)
         self.assertEqual(out_data.shape, (2, len(DATA_HISTORICAL_COLS)))
         self.assertEqual(out_data[DATA_SYMBOL][0], "test_symbol")
         self.assertEqual(out_data[DATA_OPEN][0], 13656.98000000)
-        self.assertEqual(out_data.index[0], pd.Timestamp(year=2017, month=12, day=28, hour=7))
+        self.assertEqual(
+            out_data.index[0],
+            pd.Timestamp(
+                year=2017,
+                month=12,
+                day=28,
+                hour=7))

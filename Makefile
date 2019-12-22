@@ -5,6 +5,8 @@ ENV_TEST := test
 ENV_DEV := development
 ENV_PROD := production
 
+LINT_FOLDER := controller entity handler gateway tests
+
 $(ENV): $(ENV)/bin/pip
 	$(ENV)/bin/pip install --upgrade pip && \
 	$(ENV)/bin/pip install -r requirements.txt
@@ -36,8 +38,9 @@ test:
 
 lint:
 	pip install flake8
+	pip install autopep8
 	# stop the build if there are Python syntax errors or undefined names
-	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+	#flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 	# exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-	flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-	autopep8 --in-place --recursive --aggressive controller entity handler gateway repository tests
+	flake8 $(LINT_FOLDER) --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+	autopep8 --in-place --recursive --aggressive $(LINT_FOLDER)

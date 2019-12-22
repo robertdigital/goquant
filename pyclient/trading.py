@@ -38,7 +38,7 @@ class GQOrder(Order):
         :param time_in_force: string
             day
         """
-        super().__init__(symbol, qty, side, type="market", time_in_force="day")
+        super().__init__(symbol, qty, side, type=type, time_in_force=time_in_force)
 
 
 class GQAlgo(object):

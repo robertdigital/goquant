@@ -47,10 +47,11 @@ class BinanceAccount(Account):
     def __init__(self):
         self.binance = BinanceGateway()
         self.assets = {}  # symbol->USD dollar
+        self.cash = 0.0
 
     def get_cash(self):
         self._update_account_info()
-        return self.assets.get("USD", 1000)
+        return self.cash
 
     def get_positions(self):
         self._update_account_info()
@@ -59,7 +60,12 @@ class BinanceAccount(Account):
     def _update_account_info(self):
         self.account_info = self.binance.client.get_account()
         for asset in self.account_info["balances"]:
-            self.assets[asset["asset"]] = {
-                "qty": asset["free"],
-                "side": ORDER_BUY,
-            }
+            free_qty = float(asset["free"])
+            symbol = "{}USDT".format(asset["asset"])
+            if symbol == "USDUSDT":
+                self.cash = free_qty
+            elif free_qty != 0.0:
+                self.assets[symbol] = {
+                    "qty": free_qty,
+                    "side": ORDER_BUY,
+                }

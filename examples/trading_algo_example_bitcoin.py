@@ -10,12 +10,12 @@ from pyclient.trading import GQTrading
 from entity.constants import *
 from util.logger import logger
 
-Universe = ['BTCUSDT', 'ETHUSDT']
+Universe = ['BTCUSD', 'ETHUSD']
 
 
 class AlgoBuySPYDip(GQAlgo):
     def init(self):
-        self.position_size = 1000
+        self.position_size = 11
         self.max_positions = 5
         self.data = GQData()
 
@@ -42,8 +42,8 @@ class AlgoBuySPYDip(GQAlgo):
         # excluding stocks too expensive to buy a share
         for symbol, _ in ranked[:1]:
             price = float(price_dict[symbol].Close.values[-1])
-            if price > float(self.get_cash()):
-                continue
+            # if price > float(self.get_cash()):  # remove this constraint, we can do fraction
+            #     continue
             to_buy.add(symbol)
 
         # now get the current positions and see what to buy,
@@ -58,7 +58,7 @@ class AlgoBuySPYDip(GQAlgo):
         # if a stock is in the portfolio, and not in the desired
         # portfolio, sell it
         for symbol in to_sell:
-            shares = positions[symbol].qty
+            shares = positions[symbol]["qty"]
             orders.append(GQOrder(symbol=symbol, qty=shares, side='sell'))
             logger.info(f'order(sell): {symbol} for {shares}')
 
@@ -71,8 +71,11 @@ class AlgoBuySPYDip(GQAlgo):
                 break
             # support fractional share for bitcoin
             shares = self.position_size / float(price_dict[symbol].Close.values[-1])
+            precision = 5
+            shares = "{:0.0{}f}".format(shares, precision)
             if shares == 0.0:
                 continue
+
             orders.append(GQOrder(symbol=symbol, qty=shares, side='buy'))
             logger.info(f'order(buy): {symbol} for {shares}')
             max_to_buy -= 1

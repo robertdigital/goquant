@@ -18,7 +18,8 @@ class BinanceGateway(object):
                              api_secret=self.cfg.binance_secret_key,
                              requests_params=requests_params)
 
-    def get_historical_klines(self, symbol, freq, start_datetime, end_datetime=None):
+    def get_historical_klines(
+            self, symbol, freq, start_datetime, end_datetime=None):
         """Get Historical Klines from Binance
         See dateparse docs for valid start and end string formats http://dateparser.readthedocs.io/en/latest/
         If using offset strings for dates add "UTC" to date string e.g. "now UTC", "11 hours ago UTC"
@@ -56,10 +57,12 @@ class BinanceGateway(object):
             end_ts = date_to_milliseconds(end_datetime)
 
         idx = 0
-        # it can be difficult to know when a symbol was listed on Binance so allow start time to be before list date
+        # it can be difficult to know when a symbol was listed on Binance so
+        # allow start time to be before list date
         symbol_existed = False
         while True:
-            # fetch the klines from start_ts up to max 500 entries or the end_ts if set
+            # fetch the klines from start_ts up to max 500 entries or the
+            # end_ts if set
             logger.debug("get_klines input: symbol:{}, interval:{}, limit:{}, startTime:{}, endTime:{}".format(
                 symbol, interval, limit, start_ts, end_ts
             ))
@@ -71,7 +74,8 @@ class BinanceGateway(object):
                 endTime=end_ts
             )
 
-            # handle the case where our start date is before the symbol pair listed on Binance
+            # handle the case where our start date is before the symbol pair
+            # listed on Binance
             if not symbol_existed and len(temp_data):
                 symbol_existed = True
 
@@ -79,14 +83,16 @@ class BinanceGateway(object):
                 # append this loops data to our output data
                 output_data += temp_data
 
-                # update our start timestamp using the last value in the array and add the interval timeframe
+                # update our start timestamp using the last value in the array
+                # and add the interval timeframe
                 start_ts = temp_data[len(temp_data) - 1][0] + timeframe
             else:
                 # it wasn't listed yet, increment our start date
                 start_ts += timeframe
 
             idx += 1
-            # check if we received less than the required limit and exit the loop
+            # check if we received less than the required limit and exit the
+            # loop
             if len(temp_data) < limit:
                 # exit the while loop
                 break
@@ -94,7 +100,10 @@ class BinanceGateway(object):
             # sleep after every 3rd call to be kind to the API
             if idx % 3 == 0:
                 time.sleep(1)
-        df_binance = pd.DataFrame(output_data, columns=KLINES_DATA_COLS).astype(np.float64)
+        df_binance = pd.DataFrame(
+            output_data,
+            columns=KLINES_DATA_COLS).astype(
+            np.float64)
         return df_binance
 
     def start(self):

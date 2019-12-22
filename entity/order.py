@@ -8,7 +8,8 @@ class Order(object):
     type = ""
     time_in_force = ""
 
-    def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET, time_in_force="day"):
+    def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET,
+                 time_in_force="day"):
         self.symbol = symbol
         self.qty = qty
         self.side = side
@@ -36,7 +37,8 @@ class AlpacaOrder(object):
     type = ""
     time_in_force = ""
 
-    def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET, time_in_force="day"):
+    def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET,
+                 time_in_force="day"):
         self.symbol = symbol
         self.qty = qty
         self.side = side

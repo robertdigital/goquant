@@ -8,7 +8,8 @@ class BinanceAPIException(Exception):
         try:
             json_res = response.json()
         except ValueError:
-            self.message = 'Invalid JSON error message from Binance: {}'.format(response.text)
+            self.message = 'Invalid JSON error message from Binance: {}'.format(
+                response.text)
         else:
             self.code = json_res['code']
             self.message = json_res['msg']
@@ -63,14 +64,16 @@ class BinanceOrderUnknownSymbolException(BinanceOrderException):
 
     def __init__(self, value):
         message = "Unknown symbol %s" % value
-        super(BinanceOrderUnknownSymbolException, self).__init__(-1013, message)
+        super(BinanceOrderUnknownSymbolException,
+              self).__init__(-1013, message)
 
 
 class BinanceOrderInactiveSymbolException(BinanceOrderException):
 
     def __init__(self, value):
         message = "Attempting to trade an inactive symbol %s" % value
-        super(BinanceOrderInactiveSymbolException, self).__init__(-1013, message)
+        super(BinanceOrderInactiveSymbolException,
+              self).__init__(-1013, message)
 
 
 class BinanceWithdrawException(Exception):

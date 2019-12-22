@@ -8,5 +8,5 @@ class BaseAlgo(object):
     def init(self):
         pass
 
-    def run(self)->[list]:
+    def run(self) -> [list]:
         pass

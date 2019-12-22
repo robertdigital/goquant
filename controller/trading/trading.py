@@ -53,7 +53,8 @@ class Trading(object):
         self.arg = {
             "run_freq_s": run_freq_s,
         }
-        self.trading_engine = TradingEngine.factory(trading_platform, **self.arg)
+        self.trading_engine = TradingEngine.factory(
+            trading_platform, **self.arg)
         self.run_freq_s = run_freq_s
         self.algos = algos
 
@@ -67,10 +68,14 @@ class Trading(object):
         counter = 0
         while True:
             start_time = time.time()
-            logger.info("-------count: {}, algos:{}--------".format(counter, self.algos.keys()))
+            logger.info(
+                "-------count: {}, algos:{}--------".format(counter, self.algos.keys()))
             for algo in self.algos:
                 orders = self.algos[algo].run()
-                logger.info("algo: {}, orders: {}".format(algo, [o.__dict__ for o in orders]))
+                logger.info(
+                    "algo: {}, orders: {}".format(
+                        algo, [
+                            o.__dict__ for o in orders]))
                 self._trade(orders)
             counter += 1
             spend_sec = time.time() - start_time
@@ -80,7 +85,8 @@ class Trading(object):
                                "try to use larger run_freq_s to fix it".format(spend_sec, self.run_freq_s))
                 sleep_sec = 0
             else:
-                logger.info("algo run time + traing time: {}, sleep time: {}".format(spend_sec, sleep_sec))
+                logger.info(
+                    "algo run time + traing time: {}, sleep time: {}".format(spend_sec, sleep_sec))
             time.sleep(sleep_sec)
 
     def _trade(self, orders):

@@ -42,7 +42,8 @@ class BinanceReconnectingClientFactory(ReconnectingClientFactory):
     maxRetries = 5
 
 
-class BinanceClientFactory(WebSocketClientFactory, BinanceReconnectingClientFactory):
+class BinanceClientFactory(WebSocketClientFactory,
+                           BinanceReconnectingClientFactory):
 
     protocol = BinanceClientProtocol
     _reconnect_error_payload = {
@@ -171,7 +172,8 @@ class BinanceSocketManager(threading.Thread):
             socket_name = '{}{}'.format(socket_name, depth)
         return self._start_socket(socket_name, callback)
 
-    def start_kline_socket(self, symbol, callback, interval=Client.KLINE_INTERVAL_1MINUTE):
+    def start_kline_socket(self, symbol, callback,
+                           interval=Client.KLINE_INTERVAL_1MINUTE):
         """Start a websocket for symbol kline data
 
         https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#klinecandlestick-streams
@@ -249,7 +251,8 @@ class BinanceSocketManager(threading.Thread):
             ]
         """
 
-        return self._start_socket('!miniTicker@arr@{}ms'.format(update_time), callback)
+        return self._start_socket(
+            '!miniTicker@arr@{}ms'.format(update_time), callback)
 
     def start_trade_socket(self, symbol, callback):
         """Start a websocket for symbol trade data
@@ -510,7 +513,8 @@ class BinanceSocketManager(threading.Thread):
         # Get the user margin listen key
         margin_listen_key = self._client.margin_stream_get_listen_key()
         # and start the socket with this specific key
-        return self._start_account_socket('margin', margin_listen_key, callback)
+        return self._start_account_socket(
+            'margin', margin_listen_key, callback)
 
     def _start_account_socket(self, socket_type, listen_key, callback):
         """Starts one of user or margin socket"""
@@ -534,7 +538,8 @@ class BinanceSocketManager(threading.Thread):
     def _start_socket_timer(self, socket_type):
         callback = self._keepalive_account_socket
 
-        self._timers[socket_type] = threading.Timer(self._user_timeout, callback, [socket_type])
+        self._timers[socket_type] = threading.Timer(
+            self._user_timeout, callback, [socket_type])
         self._timers[socket_type].setDaemon(True)
         self._timers[socket_type].start()
 
@@ -561,7 +566,8 @@ class BinanceSocketManager(threading.Thread):
             return
 
         # disable reconnecting if we are closing
-        self._conns[conn_key].factory = WebSocketClientFactory(self.STREAM_URL + 'tmp_path')
+        self._conns[conn_key].factory = WebSocketClientFactory(
+            self.STREAM_URL + 'tmp_path')
         self._conns[conn_key].disconnect()
         del(self._conns[conn_key])
 
@@ -570,7 +576,8 @@ class BinanceSocketManager(threading.Thread):
             self._stop_account_socket('user')
 
         # or a margin stream socket
-        if len(conn_key) >= 60 and conn_key[:60] == self._listen_keys['margin']:
+        if len(
+                conn_key) >= 60 and conn_key[:60] == self._listen_keys['margin']:
             self._stop_account_socket('margin')
 
     def _stop_account_socket(self, socket_type):

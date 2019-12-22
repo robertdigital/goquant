@@ -7,21 +7,29 @@ from pyclient.data import GQData
 class TestData(unittest.TestCase):
     def test_alpacaa_datasource(self):
         symbols = ["SPY", "UBER"]
-        out_df_7day = self._test_datasource(symbols, DATASOURCE_ALPACA, FREQ_DAY, timedelta(weeks=1))
+        out_df_7day = self._test_datasource(
+            symbols, DATASOURCE_ALPACA, FREQ_DAY, timedelta(weeks=1))
         assert out_df_7day.shape[0] >= 10
         assert out_df_7day.shape[0] <= 14
 
-        out_df_2daymin = self._test_datasource(symbols, DATASOURCE_ALPACA, FREQ_MINUTE, timedelta(days=2))
-        assert out_df_2daymin.shape[0] >= 500
+        out_df_2daymin = self._test_datasource(
+            symbols, DATASOURCE_ALPACA, FREQ_MINUTE, timedelta(days=2))
+        assert out_df_2daymin.shape[0] >=200
 
     def test_binance_datasource(self):
         symbols = ["BTCUSDT", "ETHBTC"]
-        out_df_7day = self._test_datasource(symbols, DATASOURCE_BINANCE, FREQ_DAY, timedelta(weeks=1))
+        out_df_7day = self._test_datasource(
+            symbols, DATASOURCE_BINANCE, FREQ_DAY, timedelta(weeks=1))
         assert out_df_7day.shape[0] >= 10
         assert out_df_7day.shape[0] <= 14
 
-        out_df_60min = self._test_datasource(symbols, DATASOURCE_BINANCE, FREQ_MINUTE, timedelta(hours=1))
-        assert out_df_60min.shape[0] == 120
+        out_df_60min = self._test_datasource(
+            symbols,
+            DATASOURCE_BINANCE,
+            FREQ_MINUTE,
+            timedelta(
+                hours=1))
+        assert 118 <= out_df_60min.shape[0] <= 122
 
     def _test_datasource(self, symbols, data_source, freq, time_delta):
         gq_data = GQData()

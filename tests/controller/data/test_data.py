@@ -10,9 +10,12 @@ class TestData(unittest.TestCase):
         self._test_datasource(Data(), ["SPY", "UBER"], DATASOURCE_ALPACA)
 
     def test_get_data_binance(self):
-        self._test_datasource(Data(), ["ETHBTC", "BTCUSDT"], DATASOURCE_BINANCE)
+        self._test_datasource(
+            Data(), [
+                "ETHBTC", "BTCUSDT"], DATASOURCE_BINANCE)
 
-    def _test_datasource(self, data, symbols, datasource, start_datetime=None, end_datetime=None):
+    def _test_datasource(self, data, symbols, datasource,
+                         start_datetime=None, end_datetime=None):
         if start_datetime is None or end_datetime is None:
             end_datetime = datetime.today()
             start_datetime = end_datetime - timedelta(weeks=1)
@@ -39,7 +42,8 @@ class TestData(unittest.TestCase):
         self._check_data(symbols, df_dict)
 
         for symbol in symbols:
-            data_key = data.get_data_key(symbol, FREQ_DAY, start_datetime, end_datetime)
+            data_key = data.get_data_key(
+                symbol, FREQ_DAY, start_datetime, end_datetime)
             self.assertTrue(data.check_data_key(data_key))
         data.clean_cache()
 
@@ -54,4 +58,3 @@ class TestData(unittest.TestCase):
             self.assertListEqual(
                 list(df_dict[symbol].columns),
                 DATA_HISTORICAL_COLS)
-

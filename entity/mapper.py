@@ -40,4 +40,3 @@ def order_goquant_to_binance(order: Order):
         "quantity": order.qty
     }
     return ret
-
