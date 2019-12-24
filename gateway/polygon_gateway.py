@@ -45,7 +45,10 @@ class PolygonGateway(object):
             end_date_str=end_date_str,
         )
         res = self._request_api("get", path, unadjusted=unadjusted)
-        res_df = pd.DataFrame.from_records(res["results"])
+        res_data = res.get("results", None)
+        if res_data is None:
+            raise PolygonRequestException("get empty results: {}".format(res))
+        res_df = pd.DataFrame.from_records(res_data)
         res_df[POLYGON_SYMBOL] = symbol
         return res_df
 

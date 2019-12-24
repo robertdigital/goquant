@@ -1,4 +1,6 @@
 import unittest
+import pytest
+import os
 
 from datetime import datetime, timedelta
 from entity.constants import *
@@ -6,9 +8,13 @@ from controller.data.data import Data
 
 
 class TestData(unittest.TestCase):
+    @pytest.mark.skipif(os.environ[ENV_TEST_LEVEL]
+                        == TEST_LEVEL_UNIT, reason="unit test")
     def test_get_data_alpaca(self):
         self._test_datasource(Data(), ["SPY", "UBER"], DATASOURCE_ALPACA)
 
+    @pytest.mark.skipif(os.environ[ENV_TEST_LEVEL]
+                        == TEST_LEVEL_UNIT, reason="unit test")
     def test_get_data_binance(self):
         self._test_datasource(
             Data(), [

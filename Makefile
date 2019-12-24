@@ -5,6 +5,10 @@ ENV_TEST := test
 ENV_DEV := development
 ENV_PROD := production
 
+UNIT_TEST := unit
+INTEGRATION_TEST := integration
+TEST_LEVEL := unit
+
 LINT_FOLDER := controller entity handler gateway tests
 
 $(ENV): $(ENV)/bin/pip
@@ -36,7 +40,11 @@ jenkins:
 	make test
 
 test:
-	RUNTIME_ENV=$(ENV_TEST) PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test --cov-config .coveragerc --cov util --cov controller --cov config --cov entity --cov gateway --cov handler -rxs --tb short
+	TEST_LEVEL=$(UNIT_TEST) RUNTIME_ENV=$(ENV_TEST) PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test --cov-config .coveragerc --cov util --cov controller --cov config --cov entity --cov gateway --cov handler -rxs --tb short
+	@echo 'NOTE: integration test is skipped, please run `make test_all` full test before submit'
+
+test_all:
+	TEST_LEVEL=$(INTEGRATION_TEST) RUNTIME_ENV=$(ENV_TEST) PYTHONPATH=$(ENV)/bin/python:. $(ENV)/bin/py.test --cov-config .coveragerc --cov util --cov controller --cov config --cov entity --cov gateway --cov handler -rxs --tb short
 
 lint:
 	pip install flake8

@@ -10,8 +10,7 @@ ib:
 
 alpaca:
   url: "https://paper-api.alpaca.markets"
-  # empty test account for paper trading
-  id: "PKXIIS3ILD3L45D7050K"
+  id: "test"
   key: "test"
 
 binance:

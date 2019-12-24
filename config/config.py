@@ -2,6 +2,8 @@ import os
 import yaml
 from os.path import expanduser
 
+from entity.constants import ENV_TEST_LEVEL, TEST_LEVEL_INTEGRATION
+
 
 class TradingConfig(object):
     def __init__(self, config=None):
@@ -41,7 +43,7 @@ class TradingConfig(object):
         assert self.csv_data_path
 
         # private data
-        if env != "test":
+        if os.getenv(ENV_TEST_LEVEL) == TEST_LEVEL_INTEGRATION or env != "test":
             print("load priv config: {}".format(yaml_file))
             with open(priv_yaml_file, 'r') as f:
                 self.priv_config = yaml.safe_load(f)

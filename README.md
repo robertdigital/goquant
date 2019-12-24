@@ -5,9 +5,9 @@ Send order to different broker. (Support IB, Alpaca and Binance right now)
 
 ## Current Status
 ```diff
-+ US stock data source: Alpaca
++ US stock data source: Polygon
 + US stock trading platform: Alpaca
-+ US Bitcoin data source: Binance
++ US Bitcoin data source: Binance (last 3 month)
 + US Bitcoin trading platform: Binance
 - CN data source: None
 - CN trading platfoorm: None
@@ -32,8 +32,14 @@ then activate env:
 source env/bin/activate
 ```
 Step 3. Check tests
+
+unittest (fast)
 ```bash
 make test
+```
+full test (slow), it contains integration test, run it before submit code
+```bash
+make test_all
 ```
 
 ## Dev Guide
