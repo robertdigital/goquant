@@ -3,8 +3,8 @@ import pytest
 
 import os
 from datetime import datetime, timedelta
-from entity.constants import *
-from pyclient.data import GQData
+from pyclient.constants import *
+from pyclient import GQData
 
 
 class TestData(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestData(unittest.TestCase):
 
         # test 7 days
         start_datetime = end_datetime - time_delta
-        out_df = gq_data.historical_data(
+        out_df = gq_data.get_data(
             symbols=symbols,
             freq=freq,
             start_date=start_datetime,

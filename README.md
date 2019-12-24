@@ -22,6 +22,9 @@ follow this format:
 alpaca:
   id: "<YOUR_ID>"
   key: "<YOUR_KEY>"
+binance:
+  key: "<YOUR_API_KEY>"
+  secret: "<YOUR_API_SECRET_KEY>"
 ```
 Step 2. Build env
 ```

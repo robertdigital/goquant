@@ -4,10 +4,8 @@ Example of SP500 buy dip
 from datetime import datetime, timedelta, timezone
 
 # from entity.order import Order
-from pyclient.data import GQData
-from pyclient.trading import GQAlgo, GQOrder
-from pyclient.trading import GQTrading
-from entity.constants import *
+from pyclient import GQData, GQTrading, GQAlgo, GQOrder
+from pyclient.constants import *
 from util.logger import logger
 
 Universe = ['BTCUSD', 'ETHUSD']
@@ -27,12 +25,12 @@ class AlgoBuySPYDip(GQAlgo):
 
         # get data
         start_date = datetime.today() - timedelta(days=50)
-        price_dict = self.data.historical_data(symbols=Universe,
-                                  freq=FREQ_DAY,
-                                  start_date=start_date,
-                                  end_date=datetime.now(timezone.utc),
-                                  datasource=DATASOURCE_BINANCE,
-                                               dict_output=True)
+        price_dict = self.data.get_data(symbols=Universe,
+                                        freq=FREQ_DAY,
+                                        start_date=start_date,
+                                        end_date=datetime.now(timezone.utc),
+                                        datasource=DATASOURCE_BINANCE,
+                                        dict_output=True)
 
         # rank the stocks based on the indicators.
         ranked = self._calc_scores(price_dict)
@@ -101,8 +99,7 @@ class AlgoBuySPYDip(GQAlgo):
 if __name__ == "__main__":
     trading_platform = TRADING_BINANCE
     trade = GQTrading(
-        trading_platform=trading_platform,
-        run_freq_s=600000,   # only run algo once
+        run_freq_s=600000,  # only run algo once
         algos={
             "AlgoBuySPYDip": AlgoBuySPYDip(trading_platform)
         })

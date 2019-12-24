@@ -48,15 +48,31 @@ class TradingEngineBinance(TradingEngine):
         self.binance.trade(orders)
 
 
-class Trading(object):
-    def __init__(self, trading_platform, run_freq_s=30, algos={}):
+class GQTrading(object):
+    def __init__(self, algos, run_freq_s=30):
         self.arg = {
             "run_freq_s": run_freq_s,
         }
+        # check algos
+        self._preprocess_algos(algos)
         self.trading_engine = TradingEngine.factory(
-            trading_platform, **self.arg)
+            self.trading_platform, **self.arg)
         self.run_freq_s = run_freq_s
         self.algos = algos
+
+    def _preprocess_algos(self, algos):
+        if len(algos) == 0:
+            raise ValueError("input algorithm is empty")
+
+        trading_platform = None
+        for algo_name in algos:
+            algo = algos[algo_name]
+            cur_trading_platform = algo.get_trading_platform()
+            if trading_platform is None:
+                trading_platform = cur_trading_platform
+            elif cur_trading_platform != trading_platform:
+                raise ValueError("only support one trading platform for all algorithms")
+        self.trading_platform = trading_platform
 
     def start(self):
         self.trading_engine.start()

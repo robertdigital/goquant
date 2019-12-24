@@ -12,10 +12,10 @@ from config.config import TradingConfig
 
 from gateway.binance import BinanceGateway
 from gateway.polygon_gateway import PolygonGateway, PolygonRequestException
-from entity.mapper import binance_to_goquant, alpaca_to_goquant, data_polygon_to_goquant
+from entity.mapper import binance_to_goquant, data_polygon_to_goquant
 
 
-class Data(object):
+class GQData(object):
     def __init__(self):
         self.alpaca = AlpacaGateway()
         self.binance = BinanceGateway()

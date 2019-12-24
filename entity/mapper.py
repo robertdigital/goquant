@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
 from entity.constants import *
-from .order import Order
 import gateway.binance_api.enums as binance_enums
 
 
@@ -25,7 +23,7 @@ def binance_to_goquant(symbol, in_data):
     return df_binance[DATA_HISTORICAL_COLS]
 
 
-def order_goquant_to_binance(order: Order):
+def order_goquant_to_binance(order):
     side_map = {
         ORDER_BUY: binance_enums.SIDE_BUY,
         ORDER_SELL: binance_enums.SIDE_SELL
