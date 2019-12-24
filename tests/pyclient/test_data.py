@@ -14,7 +14,7 @@ class TestData(unittest.TestCase):
 
         out_df_2daymin = self._test_datasource(
             symbols, DATASOURCE_ALPACA, FREQ_MINUTE, timedelta(days=2))
-        assert out_df_2daymin.shape[0] >=200
+        assert out_df_2daymin.shape[0] >= 200
 
     def test_binance_datasource(self):
         symbols = ["BTCUSDT", "ETHBTC"]

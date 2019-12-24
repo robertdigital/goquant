@@ -38,3 +38,10 @@ def date_to_milliseconds(d):
 
     # return the difference in time
     return int((d - epoch).total_seconds() * 1000.0)
+
+
+def datestr_to_datetime(date_str, str_fmt):
+    try:
+        return datetime.strptime(date_str, str_fmt)
+    except ValueError:
+        raise ValueError("Incorrect data format, should be {}".format(str_fmt))

@@ -1,6 +1,6 @@
 ibapi==9.76.1
 PyYAML==5.1.1
-alpaca-trade-api==0.35
+alpaca-trade-api==0.42
 ipykernel==5.1.2
 PyAlgoTrade==0.20
 pytest==5.2.4

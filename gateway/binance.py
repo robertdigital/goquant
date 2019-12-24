@@ -21,17 +21,17 @@ class BinanceGateway(object):
     def get_historical_klines(
             self, symbol, freq, start_datetime, end_datetime=None):
         """Get Historical Klines from Binance
-        See dateparse docs for valid start and end string formats http://dateparser.readthedocs.io/en/latest/
-        If using offset strings for dates add "UTC" to date string e.g. "now UTC", "11 hours ago UTC"
+
         :param symbol: Name of symbol pair e.g BNBBTC
         :type symbol: str
-        :param interval: Biannce Kline interval
-        :type interval: str
-        :param start_str: Start date string in YYYY-MM-DD format
-        :type start_str: str
-        :param end_str: optional - end date string in YYYY-MM-DD format
-        :type end_str: str
-        :return: list of OHLCV values
+        :param freq: str
+            day, minute
+        :type start_datetime: datetime
+            data start time
+        :param end_datetime: datetime
+            data end time
+        :return: dataframe
+            list of OHLCV values
         """
         interval_map = {
             FREQ_DAY: Client.KLINE_INTERVAL_1DAY,

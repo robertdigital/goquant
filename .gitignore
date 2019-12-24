@@ -44,3 +44,4 @@ gateway/ib/IBJts/*
 /priv/
 config/priv.yaml
 examples/priv_test.py
+priv_notebook.ipynb

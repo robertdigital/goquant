@@ -1,11 +1,12 @@
 """
 Example of SP500 buy dip
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-from entity.order import Order
-from controller.trading.base_algo import BaseAlgo
-from controller.trading.trading import Trading
+# from entity.order import Order
+from pyclient.data import GQData
+from pyclient.trading import GQAlgo, GQOrder
+from pyclient.trading import GQTrading
 from entity.constants import *
 from util.logger import logger
 
@@ -52,10 +53,11 @@ Universe = ['AAL', 'AAPL', 'ADBE', 'ADI', 'ADP', 'ADSK', 'ALGN', 'ALXN', 'AMAT',
 '''  # noqa
 
 
-class AlgoBuySPYDip(BaseAlgo):
+class AlgoBuySPYDip(GQAlgo):
     def init(self):
         self.position_size = 100
         self.max_positions = 5
+        self.data = GQData()
 
     def run(self):
         '''Calculate the scores within the universe to build the optimal
@@ -65,7 +67,12 @@ class AlgoBuySPYDip(BaseAlgo):
 
         # get data
         start_date = datetime.today() - timedelta(days=50)
-        price_dict = self.data.get_data(symbols=Universe, freq=FREQ_DAY, start_date=start_date.strftime(TIME_FMT))
+        price_dict = self.data.historical_data(symbols=Universe,
+                                               freq=FREQ_DAY,
+                                               start_date=start_date,
+                                               end_date=datetime.now(timezone.utc),
+                                               datasource=DATASOURCE_ALPACA,
+                                               dict_output=True)
 
         # rank the stocks based on the indicators.
         ranked = self._calc_scores(price_dict)
@@ -75,16 +82,15 @@ class AlgoBuySPYDip(BaseAlgo):
         # excluding stocks too expensive to buy a share
         for symbol, _ in ranked[:len(ranked) // 20]:
             price = float(price_dict[symbol].Close.values[-1])
-            if price > float(self.account.get_cash()):
+            if price > float(self.get_cash()):
                 continue
             to_buy.add(symbol)
 
         # now get the current positions and see what to buy,
         # what to sell to transition to today's desired portfolio.
-        positions = self.account.get_positions()
+        positions = self.get_positions()
         logger.info(positions)
-        holdings = {p.symbol: p for p in positions}
-        holding_symbol = set(holdings.keys())
+        holding_symbol = set(positions.keys())
         to_sell = holding_symbol - to_buy
         to_buy = to_buy - holding_symbol
         orders = []
@@ -92,8 +98,8 @@ class AlgoBuySPYDip(BaseAlgo):
         # if a stock is in the portfolio, and not in the desired
         # portfolio, sell it
         for symbol in to_sell:
-            shares = holdings[symbol].qty
-            orders.append(Order(symbol=symbol, qty=shares, side='sell'))
+            shares = positions[symbol]["qty"]
+            orders.append(GQOrder(symbol=symbol, qty=shares, side='sell'))
             logger.info(f'order(sell): {symbol} for {shares}')
 
         # likewise, if the portfoio is missing stocks from the
@@ -106,7 +112,7 @@ class AlgoBuySPYDip(BaseAlgo):
             shares = self.position_size // float(price_dict[symbol].Close.values[-1])
             if shares == 0.0:
                 continue
-            orders.append(Order(symbol=symbol, qty=shares, side='buy'))
+            orders.append(GQOrder(symbol=symbol, qty=shares, side='buy'))
             logger.info(f'order(buy): {symbol} for {shares}')
             max_to_buy -= 1
         return orders
@@ -129,7 +135,11 @@ class AlgoBuySPYDip(BaseAlgo):
 
 
 if __name__ == "__main__":
-    trade = Trading(run_freq_s=1, algos={
-        "AlgoBuySPYDip": AlgoBuySPYDip()
-    })
+    trading_platform = TRADING_ALPACA
+    trade = GQTrading(
+        trading_platform=trading_platform,
+        run_freq_s=600000,  # only run algo once
+        algos={
+            "AlgoBuySPYDip": AlgoBuySPYDip(trading_platform)
+        })
     trade.start()

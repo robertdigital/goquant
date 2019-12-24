@@ -26,6 +26,8 @@ python-env:
 
 research:
 	ipython kernel install --name $(ENV)
+	pip install jupyter
+	jupyter notebook
 
 # run CI 
 jenkins:

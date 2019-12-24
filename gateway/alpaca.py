@@ -1,4 +1,10 @@
+"""
+official api: https://github.com/alpacahq/alpaca-trade-api-python/
+alpaca account can use polygon.io account
+https://polygon.io/docs/#getting-started
+"""
 import time
+from deprecated.sphinx import deprecated
 
 import alpaca_trade_api as tradeapi
 
@@ -15,7 +21,8 @@ class AlpacaGateway(object):
         self.api = tradeapi.REST(
             key_id=self.cfg.alpaca_id,
             secret_key=self.cfg.alpaca_key,
-            base_url=self.cfg.alpaca_url
+            base_url=self.cfg.alpaca_url,
+            api_version='v2'
         )
         pass
 
@@ -79,6 +86,8 @@ class AlpacaGateway(object):
             time.sleep(1)
             count -= 1
 
+    @deprecated(
+        reason="alpaca data function has data limit, please use polygon data interface")
     def get_prices(self, symbols, freq='day', length=50):
         def get_barset(symbols):
             return self.api.get_barset(

@@ -102,7 +102,7 @@ if __name__ == "__main__":
     trading_platform = TRADING_BINANCE
     trade = GQTrading(
         trading_platform=trading_platform,
-        run_freq_s=600000,
+        run_freq_s=600000,   # only run algo once
         algos={
             "AlgoBuySPYDip": AlgoBuySPYDip(trading_platform)
         })

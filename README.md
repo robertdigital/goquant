@@ -46,3 +46,8 @@ make test
 make lint
 ```
 
+### Jupyter Notebook env
+```bash
+make research
+```
+

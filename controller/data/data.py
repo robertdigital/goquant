@@ -11,13 +11,15 @@ from entity.constants import *
 from config.config import TradingConfig
 
 from gateway.binance import BinanceGateway
-from entity.mapper import binance_to_goquant, alpaca_to_goquant
+from gateway.polygon_gateway import PolygonGateway
+from entity.mapper import binance_to_goquant, alpaca_to_goquant, data_polygon_to_goquant
 
 
 class Data(object):
     def __init__(self):
         self.alpaca = AlpacaGateway()
         self.binance = BinanceGateway()
+        self.polygon = PolygonGateway()
         self.cfg = TradingConfig()
         self.alpaca.start()
         self.df_all = None
@@ -146,19 +148,8 @@ class Data(object):
                            start_date, end_date, datasource):
         df_dict = {}
         if datasource == DATASOURCE_ALPACA:
-            if freq == FREQ_DAY:
-                delta = end_date - start_date
-                length = delta.days
-            elif freq == FREQ_MINUTE:
-                delta = end_date - start_date
-                length = delta.days * 8 * 60
-            else:
-                raise ValueError("unsupported freq: {}".format(freq))
-            df_dict = self._alpaca_get_prices_to_today(
-                symbols=symbols, freq=freq, length=length)
-            # cut days
-            for symbol in df_dict:
-                df_dict[symbol] = df_dict[symbol].loc[start_date:]
+            df_dict = self._alpaca_get_prices(
+                symbols, freq, start_date, end_date)
         elif datasource == DATASOURCE_BINANCE:
             df_dict = self._binance_get_prices(
                 symbols=symbols,
@@ -169,6 +160,38 @@ class Data(object):
         else:
             logger.error("unsupported datasource: {}".format(datasource))
 
+        return df_dict
+
+    def _alpaca_get_prices(self, symbols, freq, start_datetime, end_datetime):
+        df_dict = {}
+        for symbol in symbols:
+            cur_df = self.polygon.get_historical_data(
+                symbol=symbol,
+                freq=freq,
+                start_date_str=start_datetime.strftime(
+                    PolygonGateway.DATE_FMT),
+                end_date_str=end_datetime.strftime(PolygonGateway.DATE_FMT),
+                unadjusted=False,
+            )
+            gq_cur_df = data_polygon_to_goquant(cur_df)
+            df_dict[symbol] = gq_cur_df
+        return df_dict
+
+    def _alpaca_get_prices_v1(
+            self, symbols, freq, start_datetime, end_datetime):
+        if freq == FREQ_DAY:
+            delta = end_datetime - start_datetime
+            length = delta.days
+        elif freq == FREQ_MINUTE:
+            delta = end_datetime - start_datetime
+            length = delta.days * 8 * 60
+        else:
+            raise ValueError("unsupported freq: {}".format(freq))
+        df_dict = self._alpaca_get_prices_to_today(
+            symbols=symbols, freq=freq, length=length)
+        # cut days
+        for symbol in df_dict:
+            df_dict[symbol] = df_dict[symbol].loc[start_datetime:]
         return df_dict
 
     def _alpaca_get_prices_to_today(self, symbols, freq, length):

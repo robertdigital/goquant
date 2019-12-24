@@ -44,3 +44,15 @@ ORDER_SELL = "sell"
 KLINES_DATA_COLS = [DATA_DATETIME, DATA_OPEN, DATA_HIGH, DATA_LOW, DATA_CLOSE, DATA_VOLUME, "CloseTime",
                     "QuoteVolume", "Trades", "TakerBuyBaseAssetVolume", "TakerBuyQuoteAssetVolume",
                     "ignore"]
+
+# Polygon get_historical_data, /v2/aggs/ticker/
+POLYGON_VOLUME = 'v'
+POLYGON_OPEN = 'o'
+POLYGON_CLOSE = 'c'
+POLYGON_HIGH = 'h'
+POLYGON_LOW = 'l'
+POLYGON_TS = 't'
+POLYGON_AGG_WINDOW = 'n'
+POLYGON_SYMBOL = 'T'
+
+POLYGON_DATA_COLS = []
