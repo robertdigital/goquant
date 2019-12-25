@@ -4,30 +4,22 @@
 Lightweight end-to-end trading system for US stock and crypto. Support market data, algorithm development and backtesting, live and paper trading. 
 
 ## Current Status
-### Data Source
+
 ```diff
-+ US stock: Polygon, minute-level, 2015 to now
-+ US crypto: Binance, minute-level, last 3 month
-- CN data source: None
-```
-### Backtest
-based on pyalgotrade
-```diff
-+ stock
-+ crypto
-```
-### Live Trading Platform
-```diff
-+ US stock: Alpaca
-+ US crypto: Binance
-- CN stock: None
-```
-### Paper Trading Platform
-based on pyalgotrade
-```diff
-+ US stock: Alpaca
-- US crypto: Bitmex
-- CN stock: None
++ [data] US stock: Polygon, minute-level, 2015 to now
++ [backtest] PyAlgoTrade, stock
++ [paperTrading] US stock: Alpaca
++ [liveTrading] US stock: Alpaca
+
++ [data] crypto: Binance, minute-level, last 3 month
++ [backtest] PyAlgoTrade, crypto
+- [paperTrading] crypto: Bitmex
++ [liveTrading] crypto: Binance
+
+- [data] CN data source: None
++ [backtest] PyAlgoTrade, stock
+- [paperTrading] CN stock: None
+- [liveTrading] CN stock: None
 ```
 
 ## Use Guide
