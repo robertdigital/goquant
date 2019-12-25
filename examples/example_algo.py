@@ -1,21 +1,27 @@
 """
 Example of SP500 buy dip
 """
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 # from entity.order import Order
-from pyclient import GQData, GQTrading, GQAlgo, GQOrder
+from pyclient import GQAlgo, GQOrder
 from pyclient.constants import *
 from util.logger import logger
 
-Universe = ['BTCUSD', 'ETHUSD']
+# SP500
+Universe = ['MMM', 'ABT', 'ABBV', 'ACN', 'ATVI']  # noqa
+
+'''
+# SP100
+# python -c "import requests; import re; print( sorted(line.split('\"')[1] for line in re.findall('\[\"[A-Z]+\",', requests.get('http://www.nasdaq.com/quotes/nasdaq-100-stocks.aspx').text)))"
+Universe = ['AAL', 'AAPL', 'ADBE', 'ADI', 'ADP', 'ADSK', 'ALGN', 'ALXN', 'AMAT', 'AMGN', 'AMZN', 'ASML', 'ATVI', 'AVGO', 'BIDU', 'BIIB', 'BKNG', 'BMRN', 'CA', 'CDNS', 'CELG', 'CERN', 'CHKP', 'CHTR', 'CMCSA', 'COST', 'CSCO', 'CSX', 'CTAS', 'CTRP', 'CTSH', 'CTXS', 'DISH', 'DLTR', 'EA', 'EBAY', 'ESRX', 'EXPE', 'FAST', 'FB', 'FISV', 'FOX', 'FOXA', 'GILD', 'GOOG', 'GOOGL', 'HAS', 'HOLX', 'HSIC', 'IDXX', 'ILMN', 'INCY', 'INTC', 'INTU', 'ISRG', 'JBHT', 'JD', 'KHC', 'KLAC', 'LBTYA', 'LBTYK', 'LRCX', 'MAR', 'MCHP', 'MDLZ', 'MELI', 'MNST', 'MSFT', 'MU', 'MXIM', 'MYL', 'NFLX', 'NTES', 'NVDA', 'ORLY', 'PAYX', 'PCAR', 'PYPL', 'QCOM', 'QRTEA', 'REGN', 'ROST', 'SBUX', 'SHPG', 'SIRI', 'SNPS', 'STX', 'SWKS', 'SYMC', 'TMUS', 'TSLA', 'TTWO', 'TXN', 'ULTA', 'VOD', 'VRSK', 'VRTX', 'WBA', 'WDAY', 'WDC', 'WYNN', 'XLNX', 'XRAY']
+'''  # noqa
 
 
 class AlgoBuySPYDip(GQAlgo):
     def init(self):
-        self.position_size = 11
+        self.position_size = 100
         self.max_positions = 5
-        self.data = GQData()
 
     def run(self):
         '''Calculate the scores within the universe to build the optimal
@@ -24,24 +30,21 @@ class AlgoBuySPYDip(GQAlgo):
         '''
 
         # get data
-        start_date = datetime.today() - timedelta(days=50)
-        price_dict = self.data.get_data(symbols=Universe,
+        interval = timedelta(days=7)
+        price_dict = self.algo_get_data(symbols=Universe,
                                         freq=FREQ_DAY,
-                                        start_date=start_date,
-                                        end_date=datetime.now(timezone.utc),
-                                        datasource=DATASOURCE_BINANCE,
-                                        dict_output=True)
+                                        interval_timedelta=interval)
 
         # rank the stocks based on the indicators.
         ranked = self._calc_scores(price_dict)
         to_buy = set()
         to_sell = set()
-        # take the top one twentieth out of ranking,
+        # take the top one 2th out of ranking,
         # excluding stocks too expensive to buy a share
-        for symbol, _ in ranked[:1]:
+        for symbol, _ in ranked[:len(ranked)//2]:
             price = float(price_dict[symbol].Close.values[-1])
-            # if price > float(self.get_cash()):  # remove this constraint, we can do fraction
-            #     continue
+            if price > float(self.get_cash()):
+                continue
             to_buy.add(symbol)
 
         # now get the current positions and see what to buy,
@@ -67,13 +70,9 @@ class AlgoBuySPYDip(GQAlgo):
         for symbol in to_buy:
             if max_to_buy <= 0:
                 break
-            # support fractional share for bitcoin
-            shares = self.position_size / float(price_dict[symbol].Close.values[-1])
-            precision = 5
-            shares = "{:0.0{}f}".format(shares, precision)
+            shares = self.position_size // float(price_dict[symbol].Close.values[-1])
             if shares == 0.0:
                 continue
-
             orders.append(GQOrder(symbol=symbol, qty=shares, side='buy'))
             logger.info(f'order(buy): {symbol} for {shares}')
             max_to_buy -= 1
@@ -84,7 +83,7 @@ class AlgoBuySPYDip(GQAlgo):
         return the sorted result.
         '''
         diffs = {}
-        param = 10
+        param = 2
         for symbol in price_dict:
             df = price_dict[symbol]
             if len(df.Close.values) <= param:
@@ -94,13 +93,3 @@ class AlgoBuySPYDip(GQAlgo):
             diff = (last - ema) / last
             diffs[symbol] = diff
         return sorted(diffs.items(), key=lambda x: x[1])
-
-
-if __name__ == "__main__":
-    trading_platform = TRADING_BINANCE
-    trade = GQTrading(
-        run_freq_s=600000,  # only run algo once
-        algos={
-            "AlgoBuySPYDip": AlgoBuySPYDip(trading_platform)
-        })
-    trade.start()

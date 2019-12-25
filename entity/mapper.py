@@ -1,5 +1,6 @@
 import pandas as pd
 from entity.constants import *
+from controller.trading.order import GQOrder
 import gateway.binance_api.enums as binance_enums
 
 
@@ -54,3 +55,22 @@ def data_polygon_to_goquant(in_df):
     in_df = in_df.rename(columns=col_map)
     in_df[DATA_ADJCLOSE] = in_df[DATA_CLOSE]
     return in_df[DATA_HISTORICAL_COLS]
+
+
+def order_goquant_to_backtest(order: GQOrder):
+    if order.type == ORDER_TYPE_MARKET:
+        qty = order.qty
+        if order.side == ORDER_SELL:
+            qty = -order.qty
+        ret = {
+            "instrument": order.symbol,
+            "quantity": qty,
+            "onClose": False,
+            "goodTillCanceled": False,
+            "allOrNone": False,
+        }
+        return ret
+    else:
+        raise ValueError(
+            "order_goquant_to_backtest unknown order type:{}".format(
+                order.type))

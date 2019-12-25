@@ -1,4 +1,5 @@
 import time
+from datetime import datetime, timezone
 
 from entity.constants import TRADING_BINANCE, TRADING_ALPACA
 from gateway.binance import BinanceGateway
@@ -71,15 +72,12 @@ class GQTrading(object):
             if trading_platform is None:
                 trading_platform = cur_trading_platform
             elif cur_trading_platform != trading_platform:
-                raise ValueError("only support one trading platform for all algorithms")
+                raise ValueError(
+                    "only support one trading platform for all algorithms")
         self.trading_platform = trading_platform
 
     def start(self):
         self.trading_engine.start()
-
-        logger.info('init algo')
-        for algo in self.algos:
-            self.algos[algo].init()
 
         counter = 0
         while True:
@@ -87,6 +85,7 @@ class GQTrading(object):
             logger.info(
                 "-------count: {}, algos:{}--------".format(counter, self.algos.keys()))
             for algo in self.algos:
+                self.algos[algo].prerun(t=datetime.now(timezone.utc))
                 orders = self.algos[algo].run()
                 logger.info(
                     "algo: {}, orders: {}".format(

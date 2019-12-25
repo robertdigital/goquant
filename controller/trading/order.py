@@ -11,10 +11,12 @@ class GQOrder(object):
     def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET,
                  time_in_force="day"):
         self.symbol = symbol
-        self.qty = qty
+        self.qty = float(qty)
         self.side = side
         self.type = type
         self.time_in_force = time_in_force
+        if self.qty <= 0:
+            raise ValueError("GQOrder get <= 0 qty: {}".format(qty))
 
     def get_dict(self):
         """

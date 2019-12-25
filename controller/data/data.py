@@ -105,7 +105,7 @@ class GQData(object):
             return ret
 
     def check_data_key(self, data_key):
-        filepath = self._get_data_file_path(data_key)
+        filepath = self.get_data_file_path(data_key)
         return os.path.isfile(filepath)
 
     def get_data_key(self, symbol, freq, start_date, end_date):
@@ -120,15 +120,15 @@ class GQData(object):
     def save_df(self, df, data_key, overwrite=False):
         if not os.path.exists(self.cfg.csv_data_path):
             os.makedirs(self.cfg.csv_data_path)
-        filepath = self._get_data_file_path(data_key)
+        filepath = self.get_data_file_path(data_key)
         if not overwrite and os.path.isfile(filepath):
             logger.debug("exist data file, skip: {}".format(filepath))
         else:
             logger.info("saving data file to: {}".format(filepath))
-            df.to_csv(filepath)
+            df.to_csv(filepath, date_format='%Y-%m-%d %H:%M:%S')
 
     def load_df(self, data_key):
-        filepath = self._get_data_file_path(data_key)
+        filepath = self.get_data_file_path(data_key)
         if os.path.isfile(filepath):
             logger.debug("loading data from file: {}".format(filepath))
             df = pd.read_csv(filepath)
@@ -137,7 +137,7 @@ class GQData(object):
         else:
             return None
 
-    def _get_data_file_path(self, data_key):
+    def get_data_file_path(self, data_key):
         return "{}/{}.csv".format(self.cfg.csv_data_path, data_key)
 
     def clean_cache(self):
