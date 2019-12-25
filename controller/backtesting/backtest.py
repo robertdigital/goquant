@@ -37,7 +37,7 @@ class GQBacktest(object):
 
         freq_map = {
             FREQ_DAY: Frequency.DAY,
-            FREQ_MINUTE: FREQ_MINUTE,
+            FREQ_MINUTE: Frequency.MINUTE,
         }
         self.datafeed = csvfeed.GenericBarFeed(freq_map[data_freq])
         self._load_datafeed()
@@ -74,7 +74,7 @@ class GQBacktest(object):
             data_files[symbol] = file_path
 
             logging.debug("add csv file {} into data feed".format(file_path))
-            self.datafeed.addBarsFromCSV(symbol, file_path)
+            self.datafeed.addBarsFromCSV(symbol, file_path, skipMalformedBars=True)
 
     def run(self, plot=True):
         if plot:
