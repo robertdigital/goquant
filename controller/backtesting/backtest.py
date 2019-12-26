@@ -73,7 +73,8 @@ class GQBacktest(object):
             data_files[symbol] = file_path
 
             logger.debug("add csv file {} into data feed".format(file_path))
-            self.datafeed.addBarsFromCSV(symbol, file_path, skipMalformedBars=True)
+            self.datafeed.addBarsFromCSV(
+                symbol, file_path, skipMalformedBars=True)
 
     def run(self, plot=True):
         if plot:
@@ -104,7 +105,8 @@ class MyStrategy(strategy.BacktestingStrategy):
         gq_orders = self.gq_algo.run()
         for gq_order in gq_orders:
             backtest_order = order_goquant_to_backtest(gq_order)
-            logger.info("submitting order to backtest: {}".format(backtest_order))
+            logger.info(
+                "submitting order to backtest: {}".format(backtest_order))
             if gq_order.type == ORDER_TYPE_MARKET:
                 self.marketOrder(**backtest_order)
             elif gq_order.type == ORDER_TYPE_LIMIT:
