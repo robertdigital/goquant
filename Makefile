@@ -9,7 +9,7 @@ UNIT_TEST := unit
 INTEGRATION_TEST := integration
 TEST_LEVEL := unit
 
-LINT_FOLDER := controller entity handler gateway tests
+LINT_FOLDER := controller entity gateway tests
 
 $(ENV): $(ENV)/bin/pip
 	$(ENV)/bin/pip install --upgrade pip && \
