@@ -5,28 +5,25 @@ class GQOrder(object):
     symbol = ""
     qty = ""
     side = ""
+    price = None
     type = ""
     time_in_force = ""
 
-    def __init__(self, symbol, qty, side, type=ORDER_TYPE_MARKET,
-                 time_in_force="day"):
+    def __init__(self,
+                 symbol,
+                 qty,
+                 side,
+                 price=None,
+                 type=ORDER_TYPE_MARKET,
+                 time_in_force=ORDER_TIME_IN_FORCE_GTC):
         self.symbol = symbol
         self.qty = float(qty)
         self.side = side
+        self.price = price
         self.type = type
         self.time_in_force = time_in_force
         if self.qty <= 0:
             raise ValueError("GQOrder get <= 0 qty: {}".format(qty))
-
-    def get_dict(self):
-        """
-        import function for alpaca trading
-        :return:
-        """
-        return {
-            "symbol": self.symbol,
-            "qty": self.qty,
-            "side": self.side,
-            "type": self.type,
-            "time_in_force": self.time_in_force,
-        }
+        if self.type == ORDER_TYPE_LIMIT:
+            if self.price is None or self.price < 0:
+                raise ValueError("GQOrder get price < 0: {}".format(price))

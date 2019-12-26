@@ -1,6 +1,6 @@
 from pyclient.constants import *
 from pyclient import GQTrading
-from .example_algo_crypto import AlgoBuySPYDip
+from examples.example_algo_crypto import AlgoBuySPYDip
 
 
 if __name__ == "__main__":

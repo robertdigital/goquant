@@ -10,6 +10,7 @@ import alpaca_trade_api as tradeapi
 
 from config.config import TradingConfig
 from util.logger import logger
+from entity.mapper import order_goquant_to_alpaca
 
 
 class AlpacaGateway(object):
@@ -43,12 +44,14 @@ class AlpacaGateway(object):
             logger.error("please run start() first")
             return
 
+        alpaca_orders = [order_goquant_to_alpaca(o) for o in orders]
+
         # process the sell orders first
-        sells = [o for o in orders if o.side == 'sell']
+        sells = [o for o in alpaca_orders if o['side'] == 'sell']
         for order in sells:
             try:
-                logger.info(f'submit(sell): {order.get_dict()}')
-                self.api.submit_order(**order.get_dict())
+                logger.info(f'submit(sell): {order}')
+                self.api.submit_order(**order)
             except Exception as e:
                 logger.error(e)
         wait = wait // 2  # both sell and buy
@@ -66,11 +69,11 @@ class AlpacaGateway(object):
             count -= 1
 
         # process the buy orders next
-        buys = [o for o in orders if o.side == 'buy']
+        buys = [o for o in alpaca_orders if o['side'] == 'buy']
         for order in buys:
             try:
-                logger.info(f'submit(buy): {order.get_dict()}')
-                self.api.submit_order(**order.get_dict())
+                logger.info(f'submit(buy): {order}')
+                self.api.submit_order(**order)
             except Exception as e:
                 logger.error(e)
         count = wait

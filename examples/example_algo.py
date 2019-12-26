@@ -1,7 +1,7 @@
 """
 Example of SP500 buy dip
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # from entity.order import Order
 from pyclient import GQAlgo, GQOrder
@@ -60,7 +60,8 @@ class AlgoBuySPYDip(GQAlgo):
         # portfolio, sell it
         for symbol in to_sell:
             shares = positions[symbol]["qty"]
-            orders.append(GQOrder(symbol=symbol, qty=shares, side='sell'))
+            price = price_dict[symbol].Close.values[-1]
+            orders.append(GQOrder(symbol=symbol, qty=shares, side='sell', price=price, type=ORDER_TYPE_LIMIT))
             logger.info(f'order(sell): {symbol} for {shares}')
 
         # likewise, if the portfoio is missing stocks from the
@@ -73,7 +74,8 @@ class AlgoBuySPYDip(GQAlgo):
             shares = self.position_size // float(price_dict[symbol].Close.values[-1])
             if shares == 0.0:
                 continue
-            orders.append(GQOrder(symbol=symbol, qty=shares, side='buy'))
+            price = price_dict[symbol].Close.values[-1]
+            orders.append(GQOrder(symbol=symbol, qty=shares, side='buy', price=price, type=ORDER_TYPE_LIMIT))
             logger.info(f'order(buy): {symbol} for {shares}')
             max_to_buy -= 1
         return orders

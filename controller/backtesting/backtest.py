@@ -103,11 +103,12 @@ class MyStrategy(strategy.BacktestingStrategy):
         self.gq_algo.prerun(t)
         gq_orders = self.gq_algo.run()
         for gq_order in gq_orders:
+            backtest_order = order_goquant_to_backtest(gq_order)
+            logger.info("submitting order to backtest: {}".format(backtest_order))
             if gq_order.type == ORDER_TYPE_MARKET:
-                market_order = order_goquant_to_backtest(gq_order)
-                logger.info(
-                    "submit order to backtest: {}".format(market_order))
-                self.marketOrder(**market_order)
+                self.marketOrder(**backtest_order)
+            elif gq_order.type == ORDER_TYPE_LIMIT:
+                self.limitOrder(**backtest_order)
             else:
                 raise ValueError(
                     "backtest unsupport order type: {}".format(

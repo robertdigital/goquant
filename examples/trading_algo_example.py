@@ -1,6 +1,6 @@
 from pyclient.constants import *
 from pyclient import GQTrading
-from .example_algo import AlgoBuySPYDip
+from examples.example_algo import AlgoBuySPYDip
 
 if __name__ == '__main__':
     trading_platform = TRADING_ALPACA
