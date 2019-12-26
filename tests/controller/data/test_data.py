@@ -57,7 +57,7 @@ class TestData(unittest.TestCase):
         assert len(df_dict) == len(symbols)
         for symbol in symbols:
             assert symbol in df_dict
-            assert df_dict[symbol].shape[0] >= 5
+            assert df_dict[symbol].shape[0] >= 4
             assert df_dict[symbol].shape[0] <= 8
             assert df_dict[symbol].shape[1] == 7
             assert df_dict[symbol].shape[1] == 7

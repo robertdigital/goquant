@@ -16,7 +16,7 @@ class TestData(unittest.TestCase):
         # test data end today
         out_df_7day = self._test_datasource(
             symbols, DATASOURCE_ALPACA, FREQ_DAY, timedelta(weeks=1))
-        assert out_df_7day.shape[0] >= len(symbols) * 5
+        assert out_df_7day.shape[0] >= len(symbols) * 4
         assert out_df_7day.shape[0] <= len(symbols) * 7
 
         # test data at 2016 year

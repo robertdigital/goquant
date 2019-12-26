@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
-import logging
 from pyalgotrade import strategy
 
 from entity.constants import *
 from controller.trading.account import get_account_class
 from controller.data.data import GQData
+from util.logger import logger
 
 
 class GQAlgo(object):
@@ -75,7 +75,10 @@ class GQAlgo(object):
         self.backtest_strategy = strategy
         self.account.set_backtest_strategy(strategy)
 
-    def prerun(self, t):
-        logging.info(
-            "\n=================================== run algo, cur time:{}\n".format(t))
+    def prerun(self, t, verbose=True):
+        if verbose:
+            msg = "=============\nAlgorithm Time: {}\nCash: {}\nPositions: {}\n".format(
+                t, self.get_cash(), self.get_positions()
+            )
+            logger.info(msg)
         self.t = t

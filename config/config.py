@@ -21,12 +21,14 @@ class TradingConfig(object):
         with open(yaml_file, 'r') as f:
             self.config = yaml.safe_load(f)
 
-        self.logging_level = self.config["dev"]["logging-level"]
+        self.logging_level = self.config["dev"]["logging_level"]
+        self.logging_file = self.config["dev"]["logging_file"]
         self.ib_ip = self.config["ib"]["ip"]
         self.ib_port = self.config["ib"]["port"]
         self.ib_clientId = self.config["ib"]["clientId"]
 
         assert self.logging_level
+        assert self.logging_file
         assert self.ib_ip
         assert self.ib_port
 
@@ -36,11 +38,14 @@ class TradingConfig(object):
         # data
         base_folder = self.config["data"]["base_folder"]
         csv_folder_name = self.config["data"]["csv_folder"]
-        self.csv_data_path = "{}/{}/{}".format(expanduser("~"), base_folder, csv_folder_name)
+        self.base_folder = "{}/{}".format(expanduser("~"), base_folder)
+        self.csv_data_path = "{}/{}".format(self.base_folder, csv_folder_name)
         if not os.path.exists(self.csv_data_path):
             os.makedirs(self.csv_data_path)
 
         assert self.csv_data_path
+
+        self.logging_file = "{}/{}".format(self.base_folder, self.logging_file)
 
         # private data
         if os.getenv(ENV_TEST_LEVEL) == TEST_LEVEL_INTEGRATION or env != "test":

@@ -2,8 +2,6 @@
 use pyalgotrade
 http://gbeced.github.io/pyalgotrade/docs/v0.20/html/tutorial.html
 """
-import logging
-
 from pyalgotrade import strategy
 from pyalgotrade.barfeed import csvfeed
 from pyalgotrade.bar import Frequency, Bars
@@ -14,6 +12,7 @@ from controller.trading.algo import GQAlgo
 from controller.data.data import GQData
 from entity.mapper import order_goquant_to_backtest
 from entity.constants import *
+from util.logger import logger
 
 
 class GQBacktest(object):
@@ -73,7 +72,7 @@ class GQBacktest(object):
             file_path = self.data.get_data_file_path(data_key)
             data_files[symbol] = file_path
 
-            logging.debug("add csv file {} into data feed".format(file_path))
+            logger.debug("add csv file {} into data feed".format(file_path))
             self.datafeed.addBarsFromCSV(symbol, file_path, skipMalformedBars=True)
 
     def run(self, plot=True):
@@ -83,7 +82,7 @@ class GQBacktest(object):
                 "Simple returns", self.returnsAnalyzer.getReturns())
 
         self.my_strategy.run()
-        logging.info(
+        logger.info(
             "Final portfolio value: $%.2f" %
             self.my_strategy.getBroker().getEquity())
 
@@ -106,10 +105,9 @@ class MyStrategy(strategy.BacktestingStrategy):
         for gq_order in gq_orders:
             if gq_order.type == ORDER_TYPE_MARKET:
                 market_order = order_goquant_to_backtest(gq_order)
-                logging.info(
+                logger.info(
                     "submit order to backtest: {}".format(market_order))
-                res = self.marketOrder(**market_order)
-                logging.info("order response: {}".format(res))
+                self.marketOrder(**market_order)
             else:
                 raise ValueError(
                     "backtest unsupport order type: {}".format(

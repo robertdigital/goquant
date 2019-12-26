@@ -1,7 +1,8 @@
 # paper trading
 
 dev:
-  logging-level: DEBUG
+  logging_level: DEBUG
+  logging_file: "dev.log"
 
 ib:
   ip: localhost

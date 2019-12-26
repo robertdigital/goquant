@@ -1,7 +1,8 @@
 # real trading
 
 dev:
-  logging-level: INFO
+  logging_level: INFO
+  logging_file: "prod.log"
 
 ib:
   ip: localhost

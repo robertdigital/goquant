@@ -67,3 +67,6 @@ POLYGON_DATA_COLS = []
 ENV_TEST_LEVEL = "TEST_LEVEL"
 TEST_LEVEL_UNIT = "unit"
 TEST_LEVEL_INTEGRATION = "integration"
+
+# logger
+LOGGER_GOQUANT = "goquant"
