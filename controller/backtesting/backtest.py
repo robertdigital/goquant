@@ -58,6 +58,7 @@ class GQBacktest(object):
             end_date=self.end_datetime,
             datasource=self.datasource,
             use_cache=True,
+            fill_nan_method="ffill"
         )
 
         data_files = {}
@@ -106,10 +107,31 @@ class MyStrategy(strategy.BacktestingStrategy):
             backtest_order = order_goquant_to_backtest(gq_order)
             logger.info("submitting order to backtest: {}".format(backtest_order))
             if gq_order.type == ORDER_TYPE_MARKET:
-                self.marketOrder(**backtest_order)
+                if gq_order.side == ORDER_BUY:
+                    response = self.enterLong(**backtest_order)
+                else:
+                    response = self.enterShort(**backtest_order)
             elif gq_order.type == ORDER_TYPE_LIMIT:
-                self.limitOrder(**backtest_order)
+                if gq_order.side == ORDER_BUY:
+                    response = self.enterLongLimit(**backtest_order)
+                else:
+                    response = self.enterShortLimit(**backtest_order)
             else:
                 raise ValueError(
                     "backtest unsupport order type: {}".format(
                         gq_orders.type))
+            logger.info("order response: {}".format(response.__dict__))
+        active_orders = self.getBroker().getActiveOrders()
+        for active_order in active_orders:
+            logger.info("active order: {}".format(active_order.__dict__))
+        logger.info("total value: {}".format(self.getResult()))
+
+    def onEnterOk(self, position):
+        order = position.getEntryOrder()
+        execInfo = position.getEntryOrder().getExecutionInfo()
+        logger.info("BUY %s at $%.2f" % (order.getInstrument, execInfo.getPrice()))
+
+    def onExitOk(self, position):
+        order = position.getExitOrder()
+        execInfo = order.getExecutionInfo()
+        logger.info("SELL %s at $%.2f" % (order.getInstrument, execInfo.getPrice()))

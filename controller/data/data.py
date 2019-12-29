@@ -88,6 +88,9 @@ class GQData(object):
                 load_symbol, freq, start_date, end_date, datasource)
             df_dict.update(new_df_dict)
 
+        # post-process data, such as data clean, fill nan
+        df_dict = self._post_process_data(df_dict, fill_nan_method=fill_nan_method)
+
         # save output
         if use_cache:
             for symbol in df_dict:
@@ -96,9 +99,6 @@ class GQData(object):
                 self.save_df(df_dict[symbol], data_key, False)
 
         logger.info("loaded done. symbol number {}".format(len(df_dict)))
-
-        # post-process data, such as data clean, fill nan
-        df_dict = self._post_process_data(df_dict, fill_nan_method=fill_nan_method)
 
         if dict_output:
             return df_dict
@@ -132,6 +132,7 @@ class GQData(object):
             logger.debug("exist data file, skip: {}".format(filepath))
         else:
             logger.info("saving data file to: {}".format(filepath))
+            df.index.name = DATA_DATETIME
             df.to_csv(filepath, date_format='%Y-%m-%d %H:%M:%S')
 
     def load_df(self, data_key):

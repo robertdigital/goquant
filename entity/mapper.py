@@ -65,13 +65,28 @@ def data_polygon_to_goquant(in_df):
 
 def order_goquant_to_backtest(order: GQOrder):
     qty = order.qty
+    # if order.side == ORDER_SELL:
+    #     qty = -order.qty
+    ret = {
+        "instrument": order.symbol,
+        "quantity": qty,
+        "goodTillCanceled": True,
+        "allOrNone": True,
+    }
+    # limit order: # instrument, limitPrice, quantity, goodTillCanceled=False, allOrNone=False
+    if order.type == ORDER_TYPE_LIMIT:
+        ret["limitPrice"] = order.price
+    return ret
+
+def order_goquant_to_backtest_old(order: GQOrder):
+    qty = order.qty
     if order.side == ORDER_SELL:
         qty = -order.qty
     ret = {
         "instrument": order.symbol,
         "quantity": qty,
-        "goodTillCanceled": False,
-        "allOrNone": False,
+        "goodTillCanceled": True,
+        "allOrNone": True,
     }
     if order.type == ORDER_TYPE_MARKET:
         ret["onClose"] = False
