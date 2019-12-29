@@ -43,5 +43,5 @@ gateway/ib/IBJts/*
 # local files
 /priv/
 config/priv.yaml
-examples/priv_test.py
+examples/priv_my_local.py
 priv_notebook.ipynb

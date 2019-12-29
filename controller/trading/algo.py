@@ -46,7 +46,7 @@ class GQAlgo(object):
         """
         return self.account.get_positions()
 
-    def algo_get_data(self, symbols, interval_timedelta, freq):
+    def algo_get_data(self, symbols, interval_timedelta, freq, fill_nan_method=None):
         """
         get data until now (time t, get from get_time())
         :param symbols: list
@@ -55,6 +55,9 @@ class GQAlgo(object):
             used to calculate start time
         :param freq: string
             day, minute data level
+        :param fill_nan_method: string
+            fill nan method, default not fill, see more parameters here:
+            https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.fillna.html
         :return:
         """
         end_datetime = datetime.now(timezone.utc)
@@ -68,7 +71,8 @@ class GQAlgo(object):
                                   start_date=start_datetime,
                                   end_date=end_datetime,
                                   datasource=self.datasource,
-                                  dict_output=True)
+                                  dict_output=True,
+                                  fill_nan_method=fill_nan_method)
         return data
 
     def init_backtest(self, strategy: strategy.BacktestingStrategy):

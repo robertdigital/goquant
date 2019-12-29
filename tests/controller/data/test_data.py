@@ -1,6 +1,8 @@
 import unittest
 import pytest
 import os
+import pandas as pd
+import math
 
 from datetime import datetime, timedelta
 from entity.constants import *
@@ -19,6 +21,31 @@ class TestData(unittest.TestCase):
         self._test_datasource(
             GQData(), [
                 "ETHBTC", "BTCUSDT"], DATASOURCE_BINANCE)
+
+    def test_fill_nan(self):
+        df1 = pd.DataFrame.from_dict({
+            "date": [datetime(2019, 1, 1), datetime(2019, 1, 2), datetime(2019, 1, 3)],
+            "value": [1, 2, 3],
+        }).set_index("date")
+        df2 = pd.DataFrame.from_dict({
+            "date": [datetime(2019, 1, 1), datetime(2019, 1, 3)],
+            "value": [1, 3],
+        }).set_index("date")
+        df1.index = pd.to_datetime(df1.index, unit='ms')
+        df2.index = pd.to_datetime(df2.index, unit='ms')
+        data_dict = {
+            "s1": df1,
+            "s2": df2,
+        }
+        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method=None)
+        self.assertEqual(data_dict_out["s1"].shape, (3, 1))
+        self.assertEqual(data_dict_out["s2"].shape, (3, 1))
+        self.assertTrue(math.isnan(data_dict_out["s2"]["value"][1]))
+
+        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method="ffill")
+        self.assertEqual(data_dict_out["s1"].shape, (3, 1))
+        self.assertEqual(data_dict_out["s2"].shape, (3, 1))
+        self.assertEqual(data_dict_out["s2"]["value"][1], 1)
 
     def _test_datasource(self, data, symbols, datasource,
                          start_datetime=None, end_datetime=None):
