@@ -30,11 +30,14 @@ class Account(object):
     def _update_account_info(self):
         raise NotImplementedError
 
-    def _add_position(self, symbol, qty, side):
-        self.positions[symbol] = {'qty': qty, 'side': side}
+    def _add_position(self, symbol, qty):
+        self.positions[symbol] = {'qty': qty}
 
 
 class AlpacaAccount(Account):
+    POSITION_LONG = "long"
+    POSITION_SHORT = "short"
+
     def __init__(self):
         self.alpaca = AlpacaGateway()
         self.alpaca.start()
@@ -44,12 +47,16 @@ class AlpacaAccount(Account):
         self.cash = account.cash
 
         positions = self.alpaca.api.list_positions()
-        p_side_map = {
-            'long': ORDER_BUY,
-            'short': ORDER_SELL,
-        }
+
         for p in positions:
-            self._add_position(p.symbol, p.qty, p_side_map[p.side])
+            if p.qty < 0:
+                raise ValueError("get alpaca position qty < 0, qty: {}".format(p.qty))
+            if p.side == self.POSITION_LONG:
+                self._add_position(p.symbol, p.qty)
+            elif p.side == self.POSITION_SHORT:
+                self._add_position(p.symbol, -p.qty)
+            else:
+                raise ValueError("unknown alpaca position side: {}".format(p.side))
 
 
 class BinanceAccount(Account):
@@ -64,7 +71,7 @@ class BinanceAccount(Account):
             if symbol == "USDUSDT":
                 self.cash = free_qty
             elif free_qty != 0.0:
-                self._add_position(symbol, free_qty, ORDER_BUY)
+                self._add_position(symbol, free_qty)
 
 
 class BacktestAccount(Account):
@@ -80,12 +87,8 @@ class BacktestAccount(Account):
         self.cash = broker.getCash()
         positions = broker.getPositions()
         for symbol in positions:
-            side = ORDER_BUY
             qty = positions[symbol]
-            if qty < 0:
-                side = ORDER_SELL
-                qty = -qty
-            self._add_position(symbol, qty, side)
+            self._add_position(symbol, qty)
 
     def set_backtest_strategy(self, strategy: strategy.BacktestingStrategy):
         self.strategy = strategy
