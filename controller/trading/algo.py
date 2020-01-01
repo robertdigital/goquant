@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import pandas as pd
 from pyalgotrade import strategy
 
 from entity.constants import *
@@ -16,6 +17,7 @@ class GQAlgo(object):
         self.t = None  # current time in UTC
 
         self.backtest_strategy = None
+        self.metrics = {}
 
         self.init()
 
@@ -90,3 +92,10 @@ class GQAlgo(object):
             )
             logger.info(msg)
         self.t = t
+
+    def record_metric(self, key, value, figure_group=1):
+        if figure_group < 0:
+            raise ValueError("figure_grouup only can be positive, get figure_group {}".format(figure_group))
+        cur_data_serise, _ = self.metrics.get(key, (pd.Series([], name=key), figure_group))
+        cur_data_serise = cur_data_serise.append(pd.Series([value], index=[self.t], name=key))
+        self.metrics[key] = (cur_data_serise, figure_group)

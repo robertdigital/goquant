@@ -2,6 +2,7 @@
 use pyalgotrade
 http://gbeced.github.io/pyalgotrade/docs/v0.20/html/tutorial.html
 """
+import matplotlib.pyplot as plt
 from pyalgotrade import strategy
 from pyalgotrade.barfeed import csvfeed
 from pyalgotrade.bar import Frequency, Bars
@@ -48,7 +49,7 @@ class GQBacktest(object):
             self.algo,
             self.initial_cash)
         self.returnsAnalyzer = returns.Returns()
-        self.my_strategy .attachAnalyzer(self.returnsAnalyzer)
+        self.my_strategy.attachAnalyzer(self.returnsAnalyzer)
 
     def _load_datafeed(self):
         # loading all data
@@ -79,9 +80,11 @@ class GQBacktest(object):
 
     def run(self, plot=True):
         if plot:
-            plt = plotter.StrategyPlotter(self.my_strategy)
-            plt.getOrCreateSubplot("returns").addDataSeries(
+            backtest_plt = plotter.StrategyPlotter(self.my_strategy)
+            backtest_plt.getOrCreateSubplot("returns").addDataSeries(
                 "Simple returns", self.returnsAnalyzer.getReturns())
+            tmp = self.returnsAnalyzer.getReturns()
+            print(tmp)
 
         self.my_strategy.run()
         logger.info(
@@ -89,7 +92,12 @@ class GQBacktest(object):
             self.my_strategy.getBroker().getEquity())
 
         if plot:
-            plt.plot()
+            if len(self.algo.metrics) > 0:
+                for k in self.algo.metrics:
+                    ds, fig_idx = self.algo.metrics.get(k)
+                    plt.figure(fig_idx)
+                    ds.plot(legend=True)
+            backtest_plt.plot()
 
 
 class MyStrategy(strategy.BacktestingStrategy):

@@ -2,6 +2,7 @@ import pandas as pd
 from entity.constants import *
 from controller.trading.order import GQOrder
 import gateway.binance_api.enums as binance_enums
+from pyalgotrade.dataseries import SequenceDataSeries
 
 
 def alpaca_to_goquant(symbol, in_data):
@@ -113,3 +114,11 @@ def order_goquant_to_alpaca(order: GQOrder):
         "time_in_force": tif[order.time_in_force],
     }
     return ret
+
+
+def metric_goquant_to_backtest(metric_data_series):
+    ret = SequenceDataSeries()
+    for i, v in metric_data_series.items():
+        ret.appendWithDateTime(i, v)
+    return ret
+
