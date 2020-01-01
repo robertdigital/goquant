@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from entity.constants import TRADING_BINANCE, TRADING_ALPACA
 from gateway.binance import BinanceGateway
 from gateway.alpaca import AlpacaGateway
+from controller.trading.order import GQOrder
 from util.logger import logger
 
 
@@ -105,4 +106,6 @@ class GQTrading(object):
             time.sleep(sleep_sec)
 
     def _trade(self, orders):
-        self.trading_engine.trade(orders)
+        # remove invalid orders
+        valid_orders = GQOrder.get_valid_orders(orders)
+        self.trading_engine.trade(valid_orders)

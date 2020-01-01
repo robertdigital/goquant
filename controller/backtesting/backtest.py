@@ -10,6 +10,7 @@ from pyalgotrade import plotter
 
 from controller.trading.algo import GQAlgo
 from controller.data.data import GQData
+from controller.trading.order import GQOrder
 from entity.mapper import order_goquant_to_backtest
 from entity.constants import *
 from util.logger import logger
@@ -103,7 +104,8 @@ class MyStrategy(strategy.BacktestingStrategy):
         t = bars.getDateTime()
         self.gq_algo.prerun(t)
         gq_orders = self.gq_algo.run()
-        for gq_order in gq_orders:
+        valid_orders = GQOrder.get_valid_orders(gq_orders)
+        for gq_order in valid_orders:
             backtest_order = order_goquant_to_backtest(gq_order)
             logger.info("submitting order to backtest: {}".format(backtest_order))
             if gq_order.type == ORDER_TYPE_MARKET:
