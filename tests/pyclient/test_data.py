@@ -28,7 +28,7 @@ class TestData(unittest.TestCase):
 
         out_df_1daymin = self._test_datasource(  # 9am-1am
             symbols, DATASOURCE_ALPACA, FREQ_MINUTE, timedelta(days=1), end_datetime)
-        assert len(symbols) * 12 * \
+        assert len(symbols) * 11 * \
             60 <= out_df_1daymin.shape[0] <= len(symbols) * 14.5 * 60
 
     @pytest.mark.skipif(os.environ[ENV_TEST_LEVEL]

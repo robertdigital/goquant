@@ -37,12 +37,16 @@ class TestData(unittest.TestCase):
             "s1": df1,
             "s2": df2,
         }
-        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method=None)
+        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method=None, remove_nan_rows=False)
         self.assertEqual(data_dict_out["s1"].shape, (3, 1))
         self.assertEqual(data_dict_out["s2"].shape, (3, 1))
         self.assertTrue(math.isnan(data_dict_out["s2"]["value"][1]))
 
-        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method="ffill")
+        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method=None, remove_nan_rows=True)
+        self.assertEqual(data_dict_out["s1"].shape, (2, 1))
+        self.assertEqual(data_dict_out["s2"].shape, (2, 1))
+
+        data_dict_out = GQData._fill_nan(data_dict, fill_nan_method="ffill", remove_nan_rows=False)
         self.assertEqual(data_dict_out["s1"].shape, (3, 1))
         self.assertEqual(data_dict_out["s2"].shape, (3, 1))
         self.assertEqual(data_dict_out["s2"]["value"][1], 1)

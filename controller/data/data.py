@@ -4,7 +4,6 @@ import pytz
 from datetime import datetime, timezone
 from util.logger import logger
 import shutil
-import math
 
 from gateway.alpaca import AlpacaGateway
 from entity.constants import *
@@ -32,7 +31,8 @@ class GQData(object):
                  datasource=DATASOURCE_ALPACA,
                  use_cache=True,
                  dict_output=False,
-                 fill_nan_method=None):
+                 fill_nan_method=None,
+                 remove_nan_rows=True):
         """
         get historical data
         :param symbols: list of string
@@ -50,6 +50,8 @@ class GQData(object):
         :param fill_nan_method: string
             fill nan method, default not fill, see more parameters here:
             https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.fillna.html
+        :param remove_nan_rows: bool
+            remove nan rows after fill nan
         :return: dataframe
             dataframe contains symbols historical data
         """
@@ -89,7 +91,7 @@ class GQData(object):
             df_dict.update(new_df_dict)
 
         # post-process data, such as data clean, fill nan
-        df_dict = self._post_process_data(df_dict, fill_nan_method=fill_nan_method)
+        df_dict = self._post_process_data(df_dict, fill_nan_method=fill_nan_method, remove_nan_rows=remove_nan_rows)
 
         # save output
         if use_cache:
@@ -152,27 +154,39 @@ class GQData(object):
         if os.path.exists(self.cfg.csv_data_path):
             shutil.rmtree(self.cfg.csv_data_path)
 
-    def _post_process_data(self, data_dict, fill_nan_method):
-        data_dict = self._fill_nan(data_dict, fill_nan_method)
+    def _post_process_data(self, data_dict, fill_nan_method, remove_nan_rows):
+        data_dict = self._fill_nan(data_dict, fill_nan_method, remove_nan_rows)
         # make sure symbol is not nan
         for symbol in data_dict:
             data_dict[symbol][DATA_SYMBOL] = symbol
         return data_dict
 
     @staticmethod
-    def _fill_nan(data_dict, fill_nan_method=None):
+    def _fill_nan(data_dict, fill_nan_method=None, remove_nan_rows=False):
         union_index = pd.Index([])
         for symbol in data_dict:
             cur_df = data_dict[symbol]
             union_index = union_index.union(cur_df.index)
         union_index = union_index.sort_values()
+        keep_index = None
+        ret_dict = {}
         for symbol in data_dict:
             cur_df = data_dict[symbol]
             new_df = cur_df.reindex(union_index)
             if fill_nan_method is not None:
                 new_df = new_df.fillna(method=fill_nan_method)
-            data_dict[symbol] = new_df
-        return data_dict
+            if remove_nan_rows:
+                keep_df = new_df.dropna(how='any')
+                if keep_index is None:
+                    keep_index = keep_df.index
+                else:
+                    keep_index = keep_index.intersection(keep_df.index)
+            ret_dict[symbol] = new_df.copy()
+        if remove_nan_rows and keep_index is not None:
+            for symbol in ret_dict:
+                ret_dict[symbol] = ret_dict[symbol].loc[keep_index, :]
+
+        return ret_dict
 
     def _get_prices_remote(self, symbols, freq,
                            start_date, end_date, datasource):

@@ -46,7 +46,7 @@ class GQAlgo(object):
         """
         return self.account.get_positions()
 
-    def algo_get_data(self, symbols, interval_timedelta, freq, fill_nan_method=None):
+    def algo_get_data(self, symbols, interval_timedelta, freq, fill_nan_method=None, remove_nan_rows=True):
         """
         get data until now (time t, get from get_time())
         :param symbols: list
@@ -58,6 +58,8 @@ class GQAlgo(object):
         :param fill_nan_method: string
             fill nan method, default not fill, see more parameters here:
             https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.fillna.html
+        :param remove_nan_rows: bool
+            remove nan rows after fill nan
         :return:
         """
         end_datetime = datetime.now(timezone.utc)
@@ -72,7 +74,9 @@ class GQAlgo(object):
                                   end_date=end_datetime,
                                   datasource=self.datasource,
                                   dict_output=True,
-                                  fill_nan_method=fill_nan_method)
+                                  fill_nan_method=fill_nan_method,
+                                  remove_nan_rows=remove_nan_rows
+                                  )
         return data
 
     def init_backtest(self, strategy: strategy.BacktestingStrategy):
