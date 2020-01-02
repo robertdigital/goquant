@@ -20,10 +20,12 @@ class Account(object):
     positions = {}  # symbol->{'qty': 1, 'side': 'buy'}
 
     def get_cash(self):
+        self._clean()
         self._update_account_info()
         return self.cash
 
     def get_positions(self):
+        self._clean()
         self._update_account_info()
         return self.positions
 
@@ -32,6 +34,10 @@ class Account(object):
 
     def _add_position(self, symbol, qty):
         self.positions[symbol] = {'qty': qty}
+
+    def _clean(self):
+        self.cash = 0.0
+        self.positions = {}
 
 
 class AlpacaAccount(Account):
