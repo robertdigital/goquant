@@ -115,10 +115,11 @@ def order_goquant_to_alpaca(order: GQOrder):
     }
     return ret
 
-
 def metric_goquant_to_backtest(metric_data_series):
     ret = SequenceDataSeries()
     for i, v in metric_data_series.items():
         ret.appendWithDateTime(i, v)
     return ret
 
+def stream_binance_to_db():
+    pass

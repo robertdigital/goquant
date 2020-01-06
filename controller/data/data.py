@@ -113,6 +113,16 @@ class GQData(object):
                     ret = pd.concat([ret, df_dict[symbol]])
             return ret
 
+    def get_order_book(self, symbols, datasource):
+        ret = {}
+        if datasource == DATASOURCE_BINANCE:
+            for symbol in symbols:
+                cur_data = self.binance.get_order_book(symbol)
+                ret[symbol] = cur_data
+        else:
+            logger.error("{} not support order book data yet".format(datasource))
+        return ret
+
     def check_data_key(self, data_key):
         filepath = self.get_data_file_path(data_key)
         return os.path.isfile(filepath)

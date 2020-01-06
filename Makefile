@@ -11,6 +11,8 @@ TEST_LEVEL := unit
 
 LINT_FOLDER := controller entity gateway tests
 
+.PHONY: test_all airflow run
+
 $(ENV): $(ENV)/bin/pip
 	$(ENV)/bin/pip install --upgrade pip && \
 	$(ENV)/bin/pip install -r requirements.txt
@@ -19,14 +21,29 @@ install:
 	pip3 install virtualenv
 	python3 -m virtualenv $(ENV)
 	make python-env
+	make airflow-install
+
+run:
+	make airflow
 
 clean:
 	rm -rf $(ENV)
 	rm -rf .coverage
+	rm -rf airflow/logs airflow/airflow.cfg airflow/airflow.db airflow/unittests.cfg
 
 python-env:
 	$(ENV)/bin/pip install --upgrade pip && \
 	$(ENV)/bin/pip install -r requirements.txt
+
+airflow-install:
+	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/pip install apache-airflow
+
+airflow:
+	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow initdb
+	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow scheduler &
+	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow webserver -p 8080 &
+	sleep 5
+	open http://localhost:8080
 
 research:
 	ipython kernel install --name $(ENV)

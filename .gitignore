@@ -45,3 +45,10 @@ gateway/ib/IBJts/*
 config/priv.yaml
 examples/priv_my_local.py
 priv_notebook.ipynb
+airflow/logs/
+airflow/*.db
+airflow/*.pid
+airflow/airflow.cfg
+airflow/unittests.cfg
+airflow/airflow.db-journal
+

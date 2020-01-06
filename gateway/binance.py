@@ -106,6 +106,11 @@ class BinanceGateway(object):
             np.float64)
         return df_binance
 
+    def get_order_book(self, symbol, limit=100):
+        tmp = self.client.get_order_book(symbol=symbol, limit=limit)
+        return tmp
+
+
     def start(self):
         pass
 
