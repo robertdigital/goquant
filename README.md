@@ -52,6 +52,10 @@ full test (slow), it contains integration test, run it before submit code
 ```bash
 make test_all
 ```
+Step 4. Start workflow
+```bash
+make run
+```
 
 ## Dev Guide
 ### Test
