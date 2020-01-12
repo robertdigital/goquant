@@ -51,4 +51,6 @@ airflow/*.pid
 airflow/airflow.cfg
 airflow/unittests.cfg
 airflow/airflow.db-journal
+airflow/airflow-webserver.*
+airflow/airflow-scheduler.*
 

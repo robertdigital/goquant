@@ -21,3 +21,11 @@ binance:
 data:
   base_folder: "goquantdata"
   csv_folder: "raw_data_test"
+  bitmex_orderbook:
+    s3: "bitmex-orderbook"
+    freq: 5
+    symbols: ["XBTUSD", "ETHUSD"]
+
+kafka:
+  bootstrap_servers: "localhost:9092"
+  topic_bitmex_orderbook: "bitmex_orderbook"

@@ -1,4 +1,6 @@
 import pandas as pd
+import time
+
 from entity.constants import *
 from controller.trading.order import GQOrder
 import gateway.binance_api.enums as binance_enums
@@ -121,5 +123,31 @@ def metric_goquant_to_backtest(metric_data_series):
         ret.appendWithDateTime(i, v)
     return ret
 
-def stream_binance_to_db():
-    pass
+
+def stream_bitmex_to_orderbook(data_json, freq):
+    orderbook = {
+        "ts": time.time(),
+        "freq": freq,
+        "symbol": "",
+        "is_buy": [], # 0 sell, 1 buy
+        "price": [],
+        "size": [],
+    }
+    if len(data_json) == 0:
+        return orderbook
+    orderbook["symbol"] = data_json[0]["symbol"]
+
+    n = len(data_json)
+    is_buy, prices, sizes = [0]*n, [0]*n, [0]*n
+    for i in range(n):
+        record = data_json[i]
+        if record["side"] == "Buy":
+            is_buy[i] = 1
+        prices[i] = record["price"]
+        sizes[i] = record["size"]
+    orderbook["is_buy"] = is_buy
+    orderbook["price"] = prices
+    orderbook["size"] = sizes
+    return orderbook
+
+

@@ -45,6 +45,15 @@ airflow:
 	sleep 5
 	open http://localhost:8080
 
+airflow-stop:
+	cat airflow/airflow-scheduler.pid | xargs kill -9 &
+	cat airflow/airflow-webserver.pid | xargs kill -9 &
+	ps aux | grep airflow | awk '{print $2}' | xargs kill -9
+
+kafka:
+	zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties &
+	kafka-server-start /usr/local/etc/kafka/server.properties &
+
 research:
 	ipython kernel install --name $(ENV)
 	pip install jupyter

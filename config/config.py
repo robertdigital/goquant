@@ -47,6 +47,17 @@ class TradingConfig(object):
 
         self.logging_file = "{}/{}".format(self.base_folder, self.logging_file)
 
+        self.bitmex_orderbook_freq = self.config["data"]["bitmex_orderbook"]["freq"]
+        self.bitmex_orderbook_symbols = self.config["data"]["bitmex_orderbook"]["symbols"]
+        self.bitmex_orderbook_s3 = self.config["data"]["bitmex_orderbook"]["s3"]
+
+        # kafka
+        self.kafka_topic_bitmex_orderbook = self.config["kafka"]["topic_bitmex_orderbook"]
+        self.kafka_bootstrap_servers = self.config["kafka"]["bootstrap_servers"]
+
+        assert self.kafka_topic_bitmex_orderbook
+        assert self.kafka_bootstrap_servers
+
         # private data
         if os.getenv(ENV_TEST_LEVEL) == TEST_LEVEL_INTEGRATION or env != "test":
             print("load priv config: {}".format(yaml_file))
@@ -57,6 +68,8 @@ class TradingConfig(object):
             self.alpaca_key = self.priv_config["alpaca"]["key"]
             self.binance_api_key = self.priv_config["binance"]["key"]
             self.binance_secret_key = self.priv_config["binance"]["secret"]
+            self.aws_id = self.priv_config["aws"]["id"]
+            self.aws_key = self.priv_config["aws"]["key"]
         else:
             self.alpaca_id = self.config["alpaca"]["id"]
             self.alpaca_key = self.config["alpaca"]["key"]

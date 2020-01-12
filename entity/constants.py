@@ -1,8 +1,11 @@
 
 TIME_FMT = "%Y-%m-%dT%H:%M:%S%z"
+TIME_FMT_SEC = "%Y-%m-%d %H:%M:%S"
+TIME_FMT_MIN = "%Y-%m-%d %H:%M"
 
 DATASOURCE_ALPACA = 'alpaca'
 DATASOURCE_BINANCE = 'binance'
+DATASOURCE_BITMEX = 'bitmex'
 DATASOURCE_CACHE = 'cache'
 FREQ_DAY = 'day'
 FREQ_MINUTE = 'minute'

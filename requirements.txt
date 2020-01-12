@@ -8,3 +8,6 @@ pytest==5.2.4
 coverage==4.5.4
 pytest-cov==2.8.1
 dateparser==0.7.0
+kafka-python==1.4.7
+boto3==1.11.0
+apache-airflow==1.10.7
