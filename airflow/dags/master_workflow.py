@@ -1,5 +1,5 @@
-from airflow import DAG
-from datetime import datetime, timedelta
+from airflow import DAG, utils
+from datetime import timedelta
 
 from config.config import TradingConfig
 
@@ -13,7 +13,7 @@ cfg = TradingConfig(config=env)
 default_args = {
     'owner': 'Airflow',
     'depends_on_past': False,
-    'start_date': datetime.today(),
+    'start_date': utils.dates.days_ago(1),
     'email': cfg.airflow_email,
     'email_on_failure': True,
     'email_on_retry': False,
