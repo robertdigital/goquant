@@ -139,7 +139,7 @@ def stream_bitmex_to_orderbook(data_json, freq):
 
     n = len(data_json)
     is_buy, prices, sizes = [0]*n, [0]*n, [0]*n
-    for i in range(n):
+    for i in range(len(data_json)):
         record = data_json[i]
         if record["side"] == "Buy":
             is_buy[i] = 1

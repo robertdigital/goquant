@@ -36,13 +36,16 @@ class BitmexGateway(object):
 
         # Run forever
         while ws.ws.sock.connected:
-            start_time = time.time()
-            depth = ws.market_depth()
-            orderbook = stream_bitmex_to_orderbook(depth, freq=self.freq)
-            kafka_producer.send(self.cfg.kafka_topic_bitmex_orderbook,
-                                value=encode_kafka_msg(data=orderbook))
-            sleep(self.freq)
-            logging.info("market depth Size: {}, runtiime {} s".format(len(depth), time.time() - start_time))
+            try:
+                start_time = time.time()
+                depth = ws.market_depth()
+                orderbook = stream_bitmex_to_orderbook(depth, freq=self.freq)
+                kafka_producer.send(self.cfg.kafka_topic_bitmex_orderbook,
+                                    value=encode_kafka_msg(data=orderbook))
+                sleep(self.freq)
+                logging.info("market depth Size: {}, runtiime {} s".format(len(depth), time.time() - start_time))
+            except Exception as e:
+                logging.error("bitmex record get error: {}".format(e))
 
 
 if __name__ == "__main__":
