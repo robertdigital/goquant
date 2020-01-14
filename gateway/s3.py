@@ -16,16 +16,12 @@ from config.config import TradingConfig
 class S3Gateway(object):
     s3_client = None
 
-    def __init__(self, airflow_s3_hock=None):
+    def __init__(self):
         self.cfg = TradingConfig()
         logging.info("connecting to s3")
-        self.s3_airflow_hock = airflow_s3_hock
-        if airflow_s3_hock is None:
-            logging.info("get s3 client")
-            self.s3_client = boto3.client('s3')
-        else:
-            logging.info("use airflow s3 hock")
-
+        self.s3_client = boto3.client('s3',
+                                      aws_access_key_id=self.cfg.aws_id,
+                                      aws_secret_access_key=self.cfg.aws_key)
         logging.info("connected to s3")
 
     def consume_orderbook_kafka_to_s3(self):
@@ -44,21 +40,16 @@ class S3Gateway(object):
             data, ts = decode_kafka_msg(message)
             ts = datetime.fromtimestamp(ts, tz=pytz.utc).strftime(TIME_FMT_MIN)
             symbol, freq = data["symbol"], data["freq"]
-            logging.info("receive kafka msg ts: {}, symbol: {}".format(ts, symbol))
+            logging.debug("receive kafka msg ts: {}, symbol: {}".format(ts, symbol))
 
             if ts != prev_ts:
                 # get new key, move to next minute, push old data to s3
                 for s in aggregate_data:
                     key = self.get_min_orderbook_key(s, freq, ts, source=DATASOURCE_BITMEX)
-                    logging.info("save to s3, key: {}".format(key))
-                    if self.s3_airflow_hock is not None:
-                        self.s3_airflow_hock.load_bytes(bucket_name=self.cfg.bitmex_orderbook_s3,
-                                                        key=key,
-                                                        bytes_data=pickle.dumps(aggregate_data[s]))
-                    else:
-                        self.s3_client.put_object(Bucket=self.cfg.bitmex_orderbook_s3,
-                                                  Key=key,
-                                                  Body=pickle.dumps(aggregate_data[s]))
+                    logging.info("saving to s3, key: {}".format(key))
+                    self.s3_client.put_object(Bucket=self.cfg.bitmex_orderbook_s3,
+                                              Key=key,
+                                              Body=pickle.dumps(aggregate_data[s]))
                 prev_ts = ts
                 aggregate_data = {}
             cur_list = aggregate_data.get(symbol, [])

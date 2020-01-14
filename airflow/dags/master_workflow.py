@@ -7,15 +7,17 @@ from tasks.load_config_task import new_load_config_task
 from tasks.record_bitmex_data_task import new_record_bitmex_data_task
 from tasks.consume_orderbook_kafka_to_s3_task import new_consume_orderbook_kafka_to_s3_task
 
+env = "development"
+cfg = TradingConfig(config=env)
 
 default_args = {
     'owner': 'Airflow',
     'depends_on_past': False,
     'start_date': datetime.today(),
-    'email': ['hyu2707@gmail.com'],
-    'email_on_failure': False,
+    'email': cfg.airflow_email,
+    'email_on_failure': True,
     'email_on_retry': False,
-    'retries': 10,
+    'retries': 5,
     'retry_delay': timedelta(seconds=10),
     'provide_context': True,
     # 'queue': 'bash_queue',
@@ -23,11 +25,8 @@ default_args = {
     # 'priority_weight': 10,
     # 'end_date': datetime(2016, 1, 1),
 }
-
 dag = DAG('master_workflow', default_args=default_args, schedule_interval=timedelta(days=1))
 
-env = "development"
-cfg = TradingConfig(config=env)
 
 load_config_task = new_load_config_task(dag, env=env)
 for symbol in cfg.bitmex_orderbook_symbols:

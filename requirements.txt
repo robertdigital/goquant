@@ -10,4 +10,4 @@ pytest-cov==2.8.1
 dateparser==0.7.0
 kafka-python==1.4.7
 boto3==1.11.0
-apache-airflow==1.10.7
+mysqlclient==1.4.6

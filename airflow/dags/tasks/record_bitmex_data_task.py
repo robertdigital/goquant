@@ -14,7 +14,7 @@ def _record_bitmex_data(symbol, **context):
 
 def new_record_bitmex_data_task(dag, symbol):
     task = PythonOperator(
-        task_id='record_bitmex_data_{}'.format(symbol),
+        task_id='produce_bitmex_orderbook_to_kafka_{}'.format(symbol),
         python_callable=_record_bitmex_data,
         op_kwargs={'symbol': symbol},
         dag=dag,

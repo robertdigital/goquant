@@ -1,4 +1,9 @@
 # make file for goquant
+
+export PYTHONPATH = ${CURDIR}:$PYTHONPATH
+export AIRFLOW_HOME = ${CURDIR}/airflow
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY = YES
+
 project := goquant
 ENV := env
 ENV_TEST := test
@@ -24,6 +29,7 @@ install:
 	make airflow-install
 
 run:
+	make kafka
 	make airflow
 
 clean:
@@ -36,19 +42,30 @@ python-env:
 	$(ENV)/bin/pip install -r requirements.txt
 
 airflow-install:
-	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/pip install apache-airflow
+	$(ENV)/bin/pip install apache-airflow==1.10.7
+	$(ENV)/bin/pip install 'apache-airflow[aws]'
+	$(ENV)/bin/pip install 'apache-airflow[celery]'
 
 airflow:
-	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow initdb
-	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow scheduler &
-	AIRFLOW_HOME=`pwd`/airflow PYTHONPATH=`pwd`:$PYTHONPATH $(ENV)/bin/airflow webserver -p 8080 &
+	$(ENV)/bin/airflow initdb
+	$(ENV)/bin/airflow webserver -p 8080 &
+	$(ENV)/bin/airflow scheduler &
 	sleep 5
 	open http://localhost:8080
+
+airflow-worker:
+	$(ENV)/bin/airflow worker
 
 airflow-stop:
 	cat airflow/airflow-scheduler.pid | xargs kill -9 &
 	cat airflow/airflow-webserver.pid | xargs kill -9 &
-	ps aux | grep airflow | awk '{print $2}' | xargs kill -9
+	ps aux | grep airflow | awk '{print $$2}' | xargs kill -9
+
+airflow-clean:
+	rm -rf airflow/airflow-scheduler.*
+	rm -rf airflow/airflow-webserver.*
+	rm -rf airflow/airflow.db
+	make airflow-stop
 
 kafka:
 	zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties &

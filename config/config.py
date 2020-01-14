@@ -70,6 +70,10 @@ class TradingConfig(object):
             self.binance_secret_key = self.priv_config["binance"]["secret"]
             self.aws_id = self.priv_config["aws"]["id"]
             self.aws_key = self.priv_config["aws"]["key"]
+            self.bitmex_id = self.priv_config["bitmex"]["id"]
+            self.bitmex_key = self.priv_config["bitmex"]["key"]
+
+            self.airflow_email = self.priv_config["service"]["airflow"]["email"]
         else:
             self.alpaca_id = self.config["alpaca"]["id"]
             self.alpaca_key = self.config["alpaca"]["key"]

@@ -23,10 +23,10 @@ class BitmexGateway(object):
         self.freq = self.cfg.bitmex_orderbook_freq
 
     def produce_orderbook_to_kafka(self, symbol):
-        ws = BitMEXWebsocket(endpoint=self.TESTNET_ENDPOINT,
+        ws = BitMEXWebsocket(endpoint=self.BITMEX_ENDPOINT,
                              symbol=symbol,
-                             api_key=None,
-                             api_secret=None)
+                             api_key=self.cfg.bitmex_id,
+                             api_secret=self.cfg.bitmex_key)
 
         logging.info("Instrument data: %s" % ws.get_instrument())
 
@@ -38,12 +38,11 @@ class BitmexGateway(object):
         while ws.ws.sock.connected:
             start_time = time.time()
             depth = ws.market_depth()
-            logging.info("Market Depth Size: %s" % len(depth))
             orderbook = stream_bitmex_to_orderbook(depth, freq=self.freq)
             kafka_producer.send(self.cfg.kafka_topic_bitmex_orderbook,
                                 value=encode_kafka_msg(data=orderbook))
             sleep(self.freq)
-            print("--- run time: %s seconds ---" % (time.time() - start_time))
+            logging.info("market depth Size: {}, runtiime {} s".format(len(depth), time.time() - start_time))
 
 
 if __name__ == "__main__":
