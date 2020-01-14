@@ -25,7 +25,7 @@ default_args = {
     # 'priority_weight': 10,
     # 'end_date': datetime(2016, 1, 1),
 }
-dag = DAG('master_workflow', default_args=default_args, schedule_interval=timedelta(days=1))
+dag = DAG('master_workflow', default_args=default_args, schedule_interval=None)
 
 
 load_config_task = new_load_config_task(dag, env=env)
