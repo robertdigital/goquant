@@ -15,10 +15,10 @@ jobs:
         python-version: 3.6
     - name: make jenkins
       run: |
-        make jenkins
-        CODECOV_TOKEN="3d66e4f7-cf60-4393-858d-7029403a7bf6"
+        CODECOV_TOKEN="40786652-830e-4841-ba22-d0005106940c"
+        CODECOV_TOKEN="40786652-830e-4841-ba22-d0005106940c" make jenkins
         pip install codecov
-        codecov --token="3d66e4f7-cf60-4393-858d-7029403a7bf6"
+        codecov --token="40786652-830e-4841-ba22-d0005106940c"
 #     - name: Lint with flake8
 #       run: |
 #         pip install flake8
