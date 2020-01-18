@@ -1,5 +1,9 @@
 import pandas as pd
 import time
+import math
+from datetime import datetime
+import pytz
+import logging
 
 from entity.constants import *
 from controller.trading.order import GQOrder
@@ -81,6 +85,7 @@ def order_goquant_to_backtest(order: GQOrder):
         ret["limitPrice"] = order.price
     return ret
 
+
 def order_goquant_to_backtest_old(order: GQOrder):
     qty = order.qty
     if order.side == ORDER_SELL:
@@ -117,6 +122,7 @@ def order_goquant_to_alpaca(order: GQOrder):
     }
     return ret
 
+
 def metric_goquant_to_backtest(metric_data_series):
     ret = SequenceDataSeries()
     for i, v in metric_data_series.items():
@@ -150,4 +156,69 @@ def stream_bitmex_to_orderbook(data_json, freq):
     orderbook["size"] = sizes
     return orderbook
 
+
+def orderbook_to_orderbook_df(orderbook, depth_precentage=0.1, depth_bin=20, include_tail=False):
+    ret = None
+    if orderbook is None:
+        return ret
+    for row in orderbook:
+        row_dict = {
+            DATA_DATETIME: datetime.fromtimestamp(row["ts"], tz=pytz.utc),
+            DATA_SYMBOL: row["symbol"],
+        }
+        price_list = row["price"]
+        size_list = row["size"]
+        is_buy_list = row["is_buy"]
+
+        n = len(is_buy_list)
+        # find mid price
+        bid, ask = -math.inf, math.inf
+        for i in range(n):
+            price, size, is_buy = price_list[i], size_list[i], is_buy_list[i]
+            if is_buy == 1:
+                bid = max(price, bid)
+            elif is_buy == 0:
+                ask = min(price, ask)
+            else:
+                raise ValueError("unexpected is_buy value: {}".format(is_buy))
+        mid = (bid+ask)/2.0
+        row_dict[DATA_BID] = bid
+        row_dict[DATA_ASK] = ask
+
+        # count size for each price
+        while len(price_list) > 0:
+            price, size, is_buy = price_list.pop(), size_list.pop(), is_buy_list.pop()
+            if is_buy == 1:
+                data_col = DATA_BUY_PCT
+                pct = ((mid - price) / price) / depth_precentage
+            else:
+                data_col = DATA_SELL_PCT
+                pct = ((price - mid) / price) / depth_precentage
+            if pct < 0:
+                logging.warning("orderbook pct should >=0: ask/bid: {} mid:{}".format(price, mid))
+            if not include_tail and pct > 1:
+                continue
+            pct = max(min(pct, 0.9999999999), 0)
+            bin_idx = int(pct * depth_bin)
+            col = data_col.format(bin_idx=bin_idx)
+            row_dict[col] = row_dict.get(col, 0) + size
+        # cummulative size
+        for i in range(1, depth_bin):
+            prev_col = DATA_BUY_PCT.format(bin_idx=i - 1)
+            col = DATA_BUY_PCT.format(bin_idx=i)
+            row_dict[col] = row_dict.get(col, 0) + row_dict.get(prev_col, 0)
+
+            prev_col = DATA_SELL_PCT.format(bin_idx=i - 1)
+            col = DATA_SELL_PCT.format(bin_idx=i)
+            row_dict[col] = row_dict.get(col, 0) + row_dict.get(prev_col, 0)
+
+        row_dict_df = pd.DataFrame([row_dict], columns=row_dict.keys())
+        # append to ret
+        if ret is None:
+            ret = row_dict_df
+        else:
+            ret = ret.append(row_dict_df, ignore_index=True, sort=False)
+    if ret is not None and not ret.empty:
+        ret = ret.set_index(DATA_DATETIME)
+    return ret
 
