@@ -79,6 +79,8 @@ research:
 # run CI 
 jenkins:
 	make clean
+	sudo apt-get install mysql-server
+	sudo apt-get install libmysqlclient-dev
 	make install
 	make test
 

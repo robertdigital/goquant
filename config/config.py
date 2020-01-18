@@ -80,5 +80,12 @@ class TradingConfig(object):
             self.binance_api_key = self.config["binance"]["key"]
             self.binance_secret_key = self.config["binance"]["secret"]
 
+            self.aws_id = self.config["aws"]["id"]
+            self.aws_key = self.config["aws"]["key"]
+            self.bitmex_id = self.config["bitmex"]["id"]
+            self.bitmex_key = self.config["bitmex"]["key"]
+
+            self.airflow_email = self.config["service"]["airflow"]["email"]
+
         assert self.alpaca_id  # it's in priv.yaml
         assert self.alpaca_key  # it's in priv.yaml

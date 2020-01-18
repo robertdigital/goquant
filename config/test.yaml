@@ -10,13 +10,21 @@ ib:
   clientId: 0
 
 alpaca:
-  url: "https://paper-api.alpaca.markets"
+  url: https://paper-api.alpaca.markets
   id: "test"
   key: "test"
-
 binance:
-  key: ""
-  secret: ""
+  key: "test"
+  secret: "test"
+aws:
+  id: "test"
+  key: "test"
+bitmex:
+  id: "test"
+  key: "test"
+service:
+  airflow:
+    email: ["test"]
 
 data:
   base_folder: "goquantdata"
