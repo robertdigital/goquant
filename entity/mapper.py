@@ -162,8 +162,10 @@ def orderbook_to_orderbook_df(orderbook, depth_precentage=0.1, depth_bin=20, inc
     if orderbook is None:
         return ret
     for row in orderbook:
+        data_time = datetime.fromtimestamp(row["ts"], tz=pytz.utc)
+        data_time = data_time.replace(microsecond=0)
         row_dict = {
-            DATA_DATETIME: datetime.fromtimestamp(row["ts"], tz=pytz.utc),
+            DATA_DATETIME: data_time,
             DATA_SYMBOL: row["symbol"],
         }
         price_list = row["price"]

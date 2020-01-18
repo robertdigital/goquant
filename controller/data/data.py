@@ -118,7 +118,7 @@ class GQData(object):
                 if ret is None:
                     ret = df_dict[symbol]
                 else:
-                    ret = pd.concat([ret, df_dict[symbol]])
+                    ret = pd.concat([ret, df_dict[symbol]], sort=False)
             return ret
 
     def check_data_key(self, data_key):

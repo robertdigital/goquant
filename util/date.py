@@ -51,23 +51,14 @@ def datestr_to_datetime(date_str, str_fmt):
 
 def get_datetime_list_between(start_datetime, end_datetime, freq):
     if freq == FREQ_MINUTE:
-        cur_datetime = datetime(year=start_datetime.year,
-                                month=start_datetime.month,
-                                day=start_datetime.day,
-                                hour=start_datetime.hour,
-                                minute=start_datetime.minute,
-                                second=0,
-                                tzinfo=pytz.utc)
+        cur_datetime = start_datetime.replace(second=0,
+                                              microsecond=0)
         time_delta = timedelta(minutes=1)
     elif freq == FREQ_DAY:
-        cur_datetime = datetime(year=start_datetime.year,
-                                month=start_datetime.month,
-                                day=start_datetime.day,
-                                hour=0,
-                                minute=0,
-                                second=0,
-                                tzinfo=pytz.utc
-                                )
+        cur_datetime = start_datetime.replace(hour=0,
+                                              minute=0,
+                                              second=0,
+                                              microsecond=0)
         time_delta = timedelta(days=1)
     else:
         raise ValueError("unsupported freq: {}".format(freq))
